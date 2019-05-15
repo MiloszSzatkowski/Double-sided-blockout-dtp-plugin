@@ -34,24 +34,26 @@ function updateUILayout(el) {
 // ////////////////////////////////  WINDOW
 
 var W = new Window('dialog {orientation: "row"}', u_window_title);
-W.maximumSize.width = 1100;
-W.maximumSize.height = 600;
+W.maximumSize.width = 1250;
+W.maximumSize.height = 700;
 
 W.minimumSize.width = W.maximumSize.width - 10;
 W.minimumSize.height = W.maximumSize.height - 10;
 
-var scrollBar = W.add ('scrollbar {stepdelta: 10, alignment: "top"}', [0, 0, 40, 580]);
-var main_group = W.add ('group {orientation: "column", alignChildren: ["fill","fill"]}');
+var scrollBar = W.add ('scrollbar {alignment: "top"}', [0, 0, 40, 200],0,0,50);
+scrollBar.stepdelta = 1.01;
+
+var main_group = W.add ('group {orientation: "row", alignChildren: ["fill","fill"]}');
 
 var top_group    = main_group.add('group');
 main_group.add('panel');
-var bottom_group = main_group.add('group');
+var bottom_group = main_group.add('group {orientation: "column", alignChildren: ["fill","fill"]}');
 
 /////////   MODULES CONTAINER
 var modules_container = top_group.add('group {orientation: "row"}, alignChildren: ["left","top"]', u, e);
 
-modules_container.minimumSize.height = W.maximumSize.height - 150;
-modules_container.minimumSize.width = W.maximumSize.width - 80;
+modules_container.minimumSize.height = W.maximumSize.height - 30;
+modules_container.minimumSize.width = W.maximumSize.width - 250;
 modules_container.maximumSize.height = modules_container.minimumSize.height;
 
 var scrollGroup = modules_container.add('group {orientation: "column"}, alignChildren: ["fill","fill"]', u, e)
@@ -69,9 +71,9 @@ scrollBar.onChanging = function () {
 /////////   BOTTOM CONTROL GROUP
 
 var bottom_sub_group = bottom_group.add('group {orientation: "column"}');
-var bottom_first_row = bottom_sub_group.add('group {orientation: "row", alignChildren: ["fill","fill"]}');
-var bottom_second_row = bottom_sub_group.add('group {orientation: "row", alignChildren: ["fill","fill"]}');
-var bottom_third_row = bottom_sub_group.add('group {orientation: "row", alignChildren: ["fill","fill"]}');
+var bottom_first_row = bottom_sub_group.add('group {orientation: "column", alignChildren: ["fill","fill"]}');
+var bottom_second_row = bottom_sub_group.add('group {orientation: "column", alignChildren: ["fill","fill"]}');
+var bottom_third_row = bottom_sub_group.add('group {orientation: "column", alignChildren: ["fill","fill"]}');
 
 var amount_of_modules = bottom_first_row.add('panel').add('statictext', u, 1 );
 amount_of_modules.minimumSize.width = 20;
@@ -79,6 +81,9 @@ amount_of_modules.minimumSize.width = 20;
 var add_blockout = bottom_first_row.add('button', u, '+ blockout');
 
 add_blockout.onClick = function () {
+  if (parseFloat(amount_of_modules.text) > 11) {
+    alert('Twoj komputer moze nie miec wystarczajec pamieci do przetworzenia ponad 12 modulow \nKontynuujesz na wlasna odpowiedzialnosc \n\n\nYour computer may not have sufficient memory to proccess more than 12 modules \nProceed at your own risk ');
+  }
   amount_of_modules.text = parseFloat(amount_of_modules.text) + 1;
   var new_module = new Module ();
   updateUILayout(W);
@@ -98,13 +103,18 @@ delete_blockout.onClick = function () {
 var accept_button = bottom_first_row.add('button', u, 'GO');
 
 accept_button.onClick = function () {
-  var asd = '';
-    alert(scrollGroup.children[0].children[0])
+  var passed_config_obj = []
   for (var i = 0; i < scrollGroup.children.length; i++) {
-    alert(JSON.stringify(scrollGroup.children[i]));
-    // var str = JSON.stringify(rel[i], null, 4)
-    // asd = str   ;
+    var v_top = scrollGroup.children[i].children[0].children[0];
+    var v_top_02 = scrollGroup.children[i].children[0].children[1];
+    passed_config_obj.push( {
+      "ind" :  v_top.children[0].text,
+      "save" : [ (v_top_02.children[1].value)    ]
+    }  )
   }
+  alert(passed_config_obj[0].ind);
+  alert(passed_config_obj[0].save);
+
 }
 
 var close_button = bottom_first_row.add('button', u, 'close');
@@ -114,8 +124,6 @@ var small_weld_d = bottom_first_row.add('statictext', u, 'Small weld | Maly zgrz
 var small_weld = bottom_first_row.add('edittext', u, 3);
 var big_weld_d = bottom_first_row.add('statictext', u, 'Big weld | Duzy zgrzew:');
 var big_weld = bottom_first_row.add('edittext', u, 5);
-
-bottom_second_row.add('checkbox', u , 'Skip errors when opening | Pomin bledy otwierania');
 
 var help = bottom_third_row.add('button', u , 'HELP ?');
 
@@ -782,7 +790,7 @@ function Module() {
     ww.show();
   }
 
-  scroll_offset = scrollGroup.children.length*3;
+  scroll_offset = Math.ceil(scrollGroup.children.length/8);
   scrollBar.value = 0;
 }
 
