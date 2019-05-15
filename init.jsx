@@ -34,12 +34,13 @@ function updateUILayout(el) {
 // ////////////////////////////////  WINDOW
 
 var W = new Window('dialog {orientation: "row"}', u_window_title);
-W.maximumSize.width = 1050;
+W.maximumSize.width = 1100;
 W.maximumSize.height = 600;
 
 W.minimumSize.width = W.maximumSize.width - 10;
 W.minimumSize.height = W.maximumSize.height - 10;
 
+var scrollBar = W.add ('scrollbar {stepdelta: 10, alignment: "top"}', [0, 0, 40, 580]);
 var main_group = W.add ('group {orientation: "column", alignChildren: ["fill","fill"]}');
 
 var top_group    = main_group.add('group');
@@ -55,7 +56,6 @@ modules_container.maximumSize.height = modules_container.minimumSize.height;
 
 var scrollGroup = modules_container.add('group {orientation: "column"}, alignChildren: ["fill","fill"]', u, e)
 
-var scrollBar = W.add ('scrollbar {stepdelta: 20}', [0, 0, 50, 550]);
 var scroll_offset = 0;
 
 scrollBar.onChanging = function () {
@@ -92,6 +92,18 @@ delete_blockout.onClick = function () {
     scrollGroup.remove (scrollGroup.children[scrollGroup.children.length-1]);
     scrollBar.value = 0;
     updateUILayout(W);
+  }
+}
+
+var accept_button = bottom_first_row.add('button', u, 'GO');
+
+accept_button.onClick = function () {
+  var asd = '';
+    alert(scrollGroup.children[0].children[0])
+  for (var i = 0; i < scrollGroup.children.length; i++) {
+    alert(JSON.stringify(scrollGroup.children[i]));
+    // var str = JSON.stringify(rel[i], null, 4)
+    // asd = str   ;
   }
 }
 
@@ -254,6 +266,25 @@ function Module() {
   _middle.alignment = ["left", "top"];
   _bottom.alignment = ["left", "top"];
 
+  function check_for_val_in_drop_pick_the_same_outer(dropdown, val) {
+    for (var i = 0; i < dropdown.items.length; i++) {
+      if (dropdown.items[i].text == val) {
+        dropdown.selection = i;
+        break;
+      }
+    }
+    return;
+  }
+
+  function check_for_val_in_drop_bool (dropdown, val) {
+      for (var i = 0; i < dropdown.items.length; i++) {
+        if (dropdown.items[i].text == val) {
+          return true;
+        }
+      }
+      return false;
+  }
+
   var button_first_side = _top.add("iconbutton", u, "Step1Icon");
 
   var available_files_first_side = _top.add('dropdownlist', u, opened_documents_names);
@@ -269,8 +300,12 @@ function Module() {
   same_image.onClick = function () {
     if (same_image.value && (available_files_first_side.items.length > 1)
       && (available_files_first_side.selection.text !==  available_files_second_side.selection.text )) {
-        available_files_second_side.add('item', available_files_first_side.selection.text);
-        available_files_second_side.selection = available_files_second_side.items.length-1;
+        if (check_for_val_in_drop_bool(available_files_second_side, available_files_first_side.selection.text)) {
+          check_for_val_in_drop_pick_the_same_outer(available_files_second_side, available_files_first_side.selection.text)
+        } else {
+          available_files_second_side.add('item', available_files_first_side.selection.text);
+          available_files_second_side.selection = available_files_second_side.items.length-1;
+        }
     }
   }
 
@@ -284,9 +319,13 @@ function Module() {
 
   available_files_first_side.onChange = function () {
     if (same_image.value && (available_files_first_side.items.length > 0)
-  && (available_files_first_side.selection.text !==  available_files_second_side.selection.text )) {
-      available_files_second_side.add('item', available_files_first_side.selection.text);
-      available_files_second_side.selection = available_files_second_side.items.length-1;
+      && (available_files_first_side.selection.text !==  available_files_second_side.selection.text )) {
+      if (check_for_val_in_drop_bool(available_files_second_side, available_files_first_side.selection.text)) {
+        check_for_val_in_drop_pick_the_same_outer(available_files_second_side, available_files_first_side.selection.text)
+      } else {
+        available_files_second_side.add('item', available_files_first_side.selection.text);
+        available_files_second_side.selection = available_files_second_side.items.length-1;
+      }
     }
   }
 
@@ -300,9 +339,14 @@ function Module() {
 
   available_files_second_side.onChange = function () {
     if (same_image.value && (available_files_second_side.items.length > 0)
-  && (available_files_first_side.selection.text !==  available_files_second_side.selection.text )) {
-      available_files_first_side.add('item', available_files_second_side.selection.text);
-      available_files_first_side.selection = available_files_first_side.items.length-1;
+      && (available_files_first_side.selection.text !==  available_files_second_side.selection.text )) {
+      if (check_for_val_in_drop_bool(available_files_first_side, available_files_second_side.selection.text)) {
+        check_for_val_in_drop_pick_the_same_outer(available_files_first_side, available_files_second_side.selection.text)
+      } else {
+        available_files_first_side.add('item', available_files_second_side.selection.text);
+        available_files_first_side.selection = available_files_first_side.items.length-1;
+      }
+
     }
   }
 
@@ -337,13 +381,17 @@ function Module() {
     tt_w_02[p] .add('statictext', u, not);
   }
 
-  var set_butt = _bottom.add('button', undefined, 'Set | Ustaw');
+  var set_g = _bottom.add('group {orientation: "column", alignChildren: "fill"}');
+  var set_butt = set_g.add('button', undefined, 'Set | Ustaw');
+  var set_butt_desc = set_g.add('statictext', undefined, 'Fabryczne - Default');
 
   var outer_this = this;
 
   set_butt.onClick = function () {
 
-    var PARENT_OF_THIS_BUTTON = this.parent;
+    var MODIFIED = false;
+
+    var PARENT_OF_THIS_BUTTON = this.parent.parent;
 
     var ww = new Window('dialog {orientation: "row"}', u_window_title);
     var mm_group = ww.add('group {orientation: "column" , alignChildren: ["fill", "fill"]} ');
@@ -356,10 +404,8 @@ function Module() {
 
     _descriptions.add('statictext', u, widget_desc_eng, {multiline: true} );
     _descriptions.add('statictext', u, widget_desc_pl , {multiline: true} );
-    _descriptions.children[0].maximumSize.width = 100;
-    _descriptions.children[0].minimumSize.height = 100;
-    _descriptions.children[1].maximumSize.width = 100;
-    _descriptions.children[1].minimumSize.height = 100;
+
+    _descriptions.add('panel {alignment: "fill"}');
 
     var _g_t_m = _descriptions.add('group {orientation: "row", alignChildren: ["fill", "fill"]}');
 
@@ -374,6 +420,12 @@ function Module() {
       name_list_of_configs.push(config_file_json.all[i].name)
     }
 
+    _g_t01.add('statictext', u , 'USTAWIENIA | CONFIGURATIONS');
+    _g_t01.add('statictext', u , 'Wczytaj | Load :');
+
+    var load_config_drop = _g_t01.add('dropdownlist', u , name_list_of_configs);
+    load_config_drop.selection = 0;
+
     function update_list_of_configs(job, item) {
       if (job == 'add') {
         load_config_drop.add('item', item);
@@ -386,56 +438,70 @@ function Module() {
           }
         }
         load_config_drop.selection = 0;
+      } else if (job == 'overwrite') {
+
       }
     }
-
-    _g_t01.add('statictext', u , 'USTAWIENIA | CONFIGURATIONS');
-    _g_t01.add('statictext', u , 'Wczytaj | Load :');
-
-    var load_config_drop = _g_t01.add('dropdownlist', u , name_list_of_configs);
-    load_config_drop.selection = 0;
 
     load_config_drop.onChange = function () {
-      var _index_of_chosen_config = 0;
-
-      for (var i = 0; i < config_file_json.all.length; i++) {
-        if (config_file_json.all[i] == load_config_drop.selection.text) {
-          _index_of_chosen_config = i;
-          break;
-        }
-      }
-
-      // alert(config_file_json.all[_index_of_chosen_config].sides[0].finishing_type)
-
-      for (var s = 0; s < 4; s++) {
-        check_for_val_in_drop_pick_the_same(inner_drop[s],
-          config_file_json.all[_index_of_chosen_config].sides[s].finishing_type);
-        inner_drop_d[s].text =
-         config_file_json.all[_index_of_chosen_config].sides[s].finishing_value;
-        if (config_file_json.all[_index_of_chosen_config].sides[s].eyelets_bool) {
-          inner_group_eyelets[s].children[0].value =
-            config_file_json.all[_index_of_chosen_config].sides[s].eyelets_bool;
-          inner_group_eyelets[s].children[2].text =
-            config_file_json.all[_index_of_chosen_config].sides[s].eyelets_distance;
-          inner_group_eyelets_02[s].children[1].text =
-            config_file_json.all[_index_of_chosen_config].sides[s].eyelets_size;
-          check_for_val_in_drop_pick_the_same(inner_group_eyelets_02[s].children[3],
-            config_file_json.all[_index_of_chosen_config].sides[s].eyelets_cmyk);
-
-          if (config_file_json.all[_index_of_chosen_config].sides[s].eyelets_outline_bool) {
-            inner_group_eyelets_02[s].children[4].value =
-              config_file_json.all[_index_of_chosen_config].sides[s].eyelets_outline_bool;
-          }
-        }
-      }
-
+      update_configuration_front_end();
     }
+
+   function update_configuration_front_end () {
+     var _index_of_chosen_config = load_config_drop.selection.index;
+
+     for (var s = 0; s < 4; s++) {
+       check_for_val_in_drop_pick_the_same(inner_drop[s],
+         config_file_json.all[_index_of_chosen_config].sides[s].finishing_type);
+       inner_drop_d[s].text =
+        config_file_json.all[_index_of_chosen_config].sides[s].finishing_value;
+
+       if (config_file_json.all[_index_of_chosen_config].sides[s].eyelets_bool) {
+         inner_group_eyelets[s].children[0].value =
+           config_file_json.all[_index_of_chosen_config].sides[s].eyelets_bool;
+         inner_group_eyelets[s].children[2].text =
+           config_file_json.all[_index_of_chosen_config].sides[s].eyelets_distance;
+         inner_group_eyelets_02[s].children[1].text =
+           config_file_json.all[_index_of_chosen_config].sides[s].eyelets_size;
+         check_for_val_in_drop_pick_the_same(inner_group_eyelets_02[s].children[3],
+           config_file_json.all[_index_of_chosen_config].sides[s].eyelets_cmyk);
+
+           inner_group_eyelets_02[s].children[4].value =
+           config_file_json.all[_index_of_chosen_config].sides[s].eyelets_outline_bool;
+
+       } else {
+         inner_group_eyelets[s].children[0].value = false;
+         inner_group_eyelets[s].children[2].text = 0;
+         inner_group_eyelets_02[s].children[1].text = 0;
+         inner_group_eyelets_02[s].children[3].selection = 0;
+         inner_group_eyelets_02[s].children[4].value = false;
+       }
+     }
+
+   }
 
    var button_create_new_config = _g_t01.add('button', u , 'Zapisz nowe | Save new');
 
     button_create_new_config.onClick = function () {
-      var user_name = prompt('Wybierz nazwe nowych ustawien | Choose name for the new settings', '');
-      if (user_name != null) {
+      save_or_overwrite_configuration('save_new');
+    }
+
+    function save_or_overwrite_configuration(job, inform) {
+      if (inform == undefined || inform == null) {
+        inform = true;
+      }
+      var user_name;
+      if        (job == 'save_new') {
+        user_name = prompt('Wybierz nazwe nowych ustawien | Choose name for the new settings', '');
+      } else if (job == 'overwrite') {
+        user_name = load_config_drop.selection.text;
+      } else if (job == 'create_custom') {
+        user_name = 'Temporary nr ' + new Date().toString();
+      }
+      if ((user_name != null) && (user_name != 'Fabryczne - Default')) {
+        if (job == 'overwrite') {
+          delete_configuration();
+        }
         config_file_json.all.push({
           "name" : user_name,
           "sides" : []
@@ -456,11 +522,31 @@ function Module() {
         var parsed_to_json_from_js_object = JSON.stringify(config_file_json);
         save_config_json(parsed_to_json_from_js_object);
         config_file_json = load_json_config();
-        update_list_of_configs('add', user_name);
 
-        updateUILayout(ww);
-      } else {
-        alert('Nie wybrano nazwy | The name has not been chosen');
+        var dev = false;
+        var dat = '';
+          if (dev == true) {
+            dat =  JSON.stringify(config_file_json.all[load_config_drop.selection.index]).replace(/[.{}]/g, ' ').replace(/,"/g, '\n')
+          }
+
+            if        (job == 'save_new') {
+              update_list_of_configs('add', user_name);
+              if (inform) {
+              alert(user_name + '\nzapisany\n' + user_name + '\nhas been saved!\n\n' + dat );
+              }
+            } else if (job == 'overwrite'){
+              update_configuration_front_end();
+              if (inform) {
+                alert(user_name + '\nnadpisany\n' + user_name + '\noverwritten!\n\n' + dat );
+              }
+            } else if (job == 'create_custom'){
+              update_list_of_configs('add', user_name);
+            }
+
+        } else if (user_name == null) {
+          alert('Nie wybrano nazwy | The name has not been chosen');
+        } else if (user_name == 'Fabryczne - Default') {
+          alert('Nie mozna nadpisac ustawien fabrycznych | Default settings cannot be overwritten.');
       }
     }
 
@@ -488,16 +574,35 @@ function Module() {
 
     var button_create_overwrite_config = _g_t01.add('button', u , 'Nadpisz | Overwrite');
 
+    button_create_overwrite_config.onClick = function () {
+        save_or_overwrite_configuration('overwrite');
+    }
+
     var button_delete_config = _g_t01.add('button', u , 'Usun | Delete');
 
     button_delete_config.onClick = function () {
+      var deleted_tag_text = load_config_drop.selection.text;
+      delete_configuration();
+      if (load_config_drop.selection.text != 'Fabryczne - Default') {
+        update_list_of_configs('delete', load_config_drop.selection.text);
+        config_file_json = load_json_config();
+        alert(deleted_tag_text + '\nusuniety\n' + deleted_tag_text + '\ndeleted!\n\n' );
+      }
+    }
+
+    function delete_configuration() {
       for (var i = 0; i < config_file_json.all.length; i++) {
         if (config_file_json.all[i].name == load_config_drop.selection.text) {
-          config_file_json.all.splice(i,1);
-          var parsed_to_json_from_js_object = JSON.stringify(config_file_json);
-          save_config_json(parsed_to_json_from_js_object);
-          update_list_of_configs('delete', load_config_drop.selection.text);
-          break;
+          if (config_file_json.all[i].name == 'Fabryczne - Default') {
+            alert('Nie mozna usunac ustawien fabrycznych | Default settings cannot be deleted.');
+            return;
+            break;
+          } else {
+            config_file_json.all.splice(i,1);
+            var parsed_to_json_from_js_object = JSON.stringify(config_file_json);
+            save_config_json(parsed_to_json_from_js_object);
+            break;
+          }
         }
       }
     }
@@ -601,6 +706,10 @@ function Module() {
 
     //prepare box with initial values
     sp_ind = [1,3,5,7]
+
+    check_for_val_in_drop_pick_the_same(load_config_drop,
+      PARENT_OF_THIS_BUTTON.children[8].children[1].text);
+
     for (var s = 0; s < 4; s++) {
       var _sp_ind_inner = sp_ind[s];
 
@@ -634,6 +743,15 @@ function Module() {
     }
 
     _inner_accept.onClick = function () {
+      if        (load_config_drop.selection.text != 'Fabryczne - Default') {
+        if (load_config_drop.selection.text.indexOf('Temporary') !== -1) {
+          save_or_overwrite_configuration('overwrite', false);
+        }
+        PARENT_OF_THIS_BUTTON.children[8].children[1].text = load_config_drop.selection.text;
+      } else if (load_config_drop.selection.text == 'Fabryczne - Default'){
+        save_or_overwrite_configuration('create_custom', false);
+        PARENT_OF_THIS_BUTTON.children[8].children[1].text = load_config_drop.selection.text;
+      }
       for (var s = 0; s < 4; s++) {
         var _sp_ind_inner = sp_ind[s];
         PARENT_OF_THIS_BUTTON.children[_sp_ind_inner].children[0].children[0].text = inner_drop[s].selection.text;
@@ -673,3 +791,44 @@ new Module ();
 W.show();
 
 /////////////////////////////////// UI END ***********************
+
+// ACTIONS AFTER UI IS CLOSED
+
+delete_temporary_configurations();
+delete_temporary_configurations();
+
+function delete_temporary_configurations() {
+  var FILE = new File((new File($.fileName)).parent + '/finish_configs/config.json');
+  FILE.open("r");
+  var json_unparsed = '';
+  while(!FILE.eof)
+  json_unparsed += FILE.readln();
+  var json_parsed = JSON.parse(json_unparsed);
+  FILE.close();
+
+  var at_least_one = false;
+
+  amount_of_t = 0;
+
+  for (var i = 0; i < json_parsed.all.length; i++) {
+    if (json_parsed.all[i].name.indexOf('Temporary') !== -1) {
+      at_least_one = true;
+      amount_of_t++;
+      json_parsed.all.splice(i,1);
+    }
+  }
+
+  if (at_least_one) {
+    jsn = JSON.stringify(json_parsed);
+
+    FILE.open("w");
+    FILE.writeln('');
+    FILE.close();
+
+    FILE.open("e", "TEXT");
+    FILE.writeln(jsn);
+    FILE.close();
+
+  }
+
+}
