@@ -2,8 +2,6 @@
 
 #include json2.js
 
-
-
 ////////////////////////////////// ONLY OPERATE IN PHOTOSHOP ***********************
 
 #target photoshop
@@ -82,7 +80,9 @@ var add_blockout = bottom_first_row.add('button', u, '+ blockout');
 
 add_blockout.onClick = function () {
   if (parseFloat(amount_of_modules.text) > 11) {
-    alert('Twoj komputer moze nie miec wystarczajec pamieci do przetworzenia ponad 12 modulow \nKontynuujesz na wlasna odpowiedzialnosc \n\n\nYour computer may not have sufficient memory to proccess more than 12 modules \nProceed at your own risk ');
+    alert('Twoj komputer moze nie miec wystarczajec pamieci do przetworzenia ponad 12 modulow'+
+    ' \nKontynuujesz na wlasna odpowiedzialnosc'+
+    ' \n\n\nYour computer may not have sufficient memory to proccess more than 12 modules \nProceed at your own risk ');
   }
   amount_of_modules.text = parseFloat(amount_of_modules.text) + 1;
   var new_module = new Module ();
@@ -103,17 +103,8 @@ delete_blockout.onClick = function () {
 var accept_button = bottom_first_row.add('button', u, 'GO');
 
 accept_button.onClick = function () {
-  var passed_config_obj = []
-  for (var i = 0; i < scrollGroup.children.length; i++) {
-    var v_top = scrollGroup.children[i].children[0].children[0];
-    var v_top_02 = scrollGroup.children[i].children[0].children[1];
-    passed_config_obj.push( {
-      "ind" :  v_top.children[0].text,
-      "save" : [ (v_top_02.children[1].value)    ]
-    }  )
-  }
-  alert(passed_config_obj[0].ind);
-  alert(passed_config_obj[0].save);
+  prepare_data_before_execution();
+
 
 }
 
@@ -227,6 +218,7 @@ function Module() {
 
   var save_config_d = _very_top_02.add('statictext', u, 'Save | Zapisz : ');
   var save_config_auto = _very_top_02.add('checkbox', u, 'Automatically | Automatycznie');
+  save_config_auto.value = true;
   var save_config_manual_dialog = _very_top_02.add('checkbox', u, 'Manual | Manualnie');
   var save_config_manual = _very_top_02.add('checkbox', u, folder_ch_desc);
   var manual_destination_butt = _very_top_02.add ("iconbutton", u, "DestinationFolderIcon");
@@ -840,3 +832,317 @@ function delete_temporary_configurations() {
   }
 
 }
+
+function prepare_data_before_execution() {
+  var passed_config_obj = []
+  for (var i = 0; i < scrollGroup.children.length; i++) {
+
+    var v_top = scrollGroup.children[i].children[0].children[0];
+    var v_top_02 = scrollGroup.children[i].children[0].children[1];
+
+    var top_01 = scrollGroup.children[i].children[0].children[2];
+    var top_02 = scrollGroup.children[i].children[0].children[3];
+
+    var bott_00 = scrollGroup.children[i].children[0].children[4];
+
+    passed_config_obj[i] = {
+      "ind": v_top.children[0].text,
+      "save_type": [v_top_02.children[1].value, v_top_02.children[2].value, v_top_02.children[3].value],
+      "save_manual_output": v_top_02.children[4].text,
+      "file_01": top_01.children[1].selection.text,
+      "file_02": top_02.children[1].selection.text,
+      "sides": [{
+            "side" : "top",
+            "type": bott_00.children[1].children[0].children[0].text,
+            "finishing_value": bott_00.children[1].children[0].children[1].text,
+
+            "eyelets_distance": bott_00.children[1].children[1].children[1].text,
+            "eyelets_size": bott_00.children[1].children[1].children[2].text,
+            "eyelets_cmyk": bott_00.children[1].children[1].children[3].text,
+            "eyelets_outline_bool": (bott_00.children[1].children[1].children[4].text == 'o'),
+
+            "eyelets_bool": (
+              bott_00.children[1].children[1].children[1].text != 'xxx' &&
+              bott_00.children[1].children[1].children[2].text != 'xxx' &&
+              bott_00.children[1].children[1].children[3].text != 'xxx'),
+        }, {
+            "side" : "right",
+            "type": bott_00.children[3].children[0].children[0].text,
+            "finishing_value": bott_00.children[3].children[0].children[1].text,
+
+            "eyelets_distance": bott_00.children[3].children[1].children[1].text,
+            "eyelets_size": bott_00.children[3].children[1].children[2].text,
+            "eyelets_cmyk": bott_00.children[3].children[1].children[3].text,
+            "eyelets_outline_bool": (bott_00.children[1].children[1].children[4].text == 'o'),
+
+            "eyelets_bool": (
+              bott_00.children[3].children[1].children[1].text != 'xxx' &&
+              bott_00.children[3].children[1].children[2].text != 'xxx' &&
+              bott_00.children[3].children[1].children[3].text != 'xxx'),
+        },
+
+        {
+            "side" : "left",
+            "type": bott_00.children[5].children[0].children[0].text,
+            "finishing_value": bott_00.children[5].children[0].children[1].text,
+
+            "eyelets_distance": bott_00.children[5].children[1].children[1].text,
+            "eyelets_size": bott_00.children[5].children[1].children[2].text,
+            "eyelets_cmyk": bott_00.children[5].children[1].children[3].text,
+            "eyelets_outline_bool": (bott_00.children[1].children[1].children[4].text == 'o'),
+
+            "eyelets_bool": (
+              bott_00.children[5].children[1].children[1].text != 'xxx' &&
+              bott_00.children[5].children[1].children[2].text != 'xxx' &&
+              bott_00.children[5].children[1].children[3].text != 'xxx'),
+        },
+
+        {
+            "side" : "bottom",
+            "type": bott_00.children[7].children[0].children[0].text,
+            "finishing_value": bott_00.children[7].children[0].children[1].text,
+
+            "eyelets_distance": bott_00.children[7].children[1].children[1].text,
+            "eyelets_size": bott_00.children[7].children[1].children[2].text,
+            "eyelets_cmyk": bott_00.children[7].children[1].children[3].text,
+            "eyelets_outline_bool": (bott_00.children[1].children[1].children[4].text == 'o'),
+
+            "eyelets_bool": (
+              bott_00.children[7].children[1].children[1].text != 'xxx' &&
+              bott_00.children[7].children[1].children[2].text != 'xxx' &&
+              bott_00.children[7].children[1].children[3].text != 'xxx'),
+        },
+
+      ]
+
+    } // end of passed_config_obj
+  } // end of for loop
+
+
+  for (var i = 0; i < passed_config_obj.length; i++) {
+    if (passed_config_obj[i].file_01 == '' || passed_config_obj[i].file_01 == '') {
+      alert('Error in module nr '+ (i+1) +'\n\nProsze wybrac pliki do przetworzenia\nPlease, select files to proccess');
+      return;
+      break;
+    }
+  }
+  //dev loopup
+  // alert(passed_config_obj)
+  // var parsed_dd = JSON.stringify(passed_config_obj, null, 10);
+  // alert(parsed_dd)
+
+  execute(passed_config_obj);
+
+} // end of function
+
+// ***************************** EXECUTE ***************************** ***************************** *****************************
+//
+function execute(configuration_object) {
+
+  preferences.rulerUnits = Units.CM;
+  var fr_size = 0.05;
+  var offset = 1;
+
+  var whiteColorObj = new CMYKColor();
+  var am = 0;
+  whiteColorObj.cyan = am;
+  whiteColorObj.magenta = am;
+  whiteColorObj.yellow = am;
+  whiteColorObj.black = am;
+
+  var blackColorObj = new CMYKColor();
+  var bm = 100;
+  blackColorObj.cyan = bm;
+  blackColorObj.magenta = bm;
+  blackColorObj.yellow = bm;
+  blackColorObj.black = bm;
+
+  var greyColorObj = new CMYKColor();
+  var cc = 50;
+  greyColorObj.cyan = cc;
+  greyColorObj.magenta = cc;
+  greyColorObj.yellow = cc;
+  greyColorObj.black = cc;
+
+  function is_in_opened_documents(file_name) {
+    for (var j = 0; j < app.documents.length; j++) {
+      if (app.documents[j].name.toString() == file_name) {
+        return true;
+        break;
+      }
+    }
+    return false;
+  }
+
+  function get_index_of_a_file(file_name) {
+    for (var j = 0; j < app.documents.length; j++) {
+      if (app.documents[j].name.toString() == file_name) {
+        return j;
+        break;
+      }
+    }
+    return;
+  }
+
+  function frame(frameSize, anchor) {
+
+    if (anchor == null || anchor == undefined) {
+      anchor = AnchorPosition.MIDDLECENTER;
+    }
+
+    app.backgroundColor.cmyk = greyColorObj;
+
+    activeDocument.resizeCanvas(
+      app.activeDocument.width.value - frameSize,
+      app.activeDocument.height.value - frameSize,
+      anchor);
+
+    activeDocument.resizeCanvas(
+      app.activeDocument.width.value + frameSize,
+      app.activeDocument.height.value + frameSize,
+      anchor);
+
+    app.backgroundColor.cmyk = whiteColorObj;
+  }
+
+  for (var i = 0; i < configuration_object.length; i++) {
+
+    //GET FILES
+
+    var first_side, second_side;
+
+    if (configuration_object[i].file_01.indexOf('/') !== -1) { // is a path
+      if (!is_in_opened_documents(configuration_object[i].file_01)) {
+        first_side = app.open(File(configuration_object[i].file_01));
+      } else {
+        first_side = app.documents[get_index_of_a_file(configuration_object[i].file_01)];
+      }
+    } else {
+      if (is_in_opened_documents(configuration_object[i].file_01)) {
+        first_side = app.documents[get_index_of_a_file(configuration_object[i].file_01)];
+      }
+    }
+
+    if (configuration_object[i].file_02.indexOf('/') !== -1) { // is a path
+      if (!is_in_opened_documents(configuration_object[i].file_02)) {
+        second_side = app.open(File(configuration_object[i].file_02));
+      } else {
+        second_side = app.documents[get_index_of_a_file(configuration_object[i].file_02)];
+      }
+    } else {
+      if (is_in_opened_documents(configuration_object[i].file_02)) {
+        second_side = app.documents[get_index_of_a_file(configuration_object[i].file_02)];
+      }
+    }
+
+    //CREATE NEW DOCUMENT IF THE FILES ARE THE SAME
+    if (first_side.name.toString() == second_side.name.toString()) {
+      second_side = app.documents.add(
+        first_side.width.value,
+        first_side.height.value,
+        first_side.resolution,
+        (first_side.name + '_02'),
+        NewDocumentMode.CMYK);
+      app.activeDocument = first_side;
+      app.activeDocument.flatten();
+      app.activeDocument.selection.selectAll();
+      app.activeDocument.selection.copy();
+      app.activeDocument.selection.deselect();
+      app.activeDocument = second_side;
+      app.activeDocument.paste();
+      app.activeDocument.flatten();
+    }
+
+    //CONVERT TO CMYK AND FLATTEN
+    for (var j = 0; j < [first_side, second_side].length; j++) {
+      app.activeDocument.flatten();
+      app.activeDocument = [first_side, second_side][j];
+      var idCnvM = charIDToTypeID("CnvM");
+      var desc54 = new ActionDescriptor();
+      var idT = charIDToTypeID("T   ");
+      var idCMYM = charIDToTypeID("CMYM");
+      desc54.putClass(idT, idCMYM);
+      executeAction(idCnvM, desc54, DialogModes.NO);
+    }
+
+    //MAKE THE SAME SIZE
+    if (first_side.width.value !== second_side.width.value || first_side.height.value !== second_side.height.value || first_side.resolution !== second_side.resolution) {
+      second_side.resizeImage(first_side.width.value, first_side.height.value, first_side.resolution, ResampleMethod.BICUBIC);
+    }
+
+    // alert(first_side)
+    // alert(second_side)
+
+    // MAKE FINISHINGS
+
+    // HELPER
+    // var finishings =
+    // ['cut | dociecie' , 'sm weld | maly zgrzew', 'xl weld | duzy zgrzew', 'sleeve | rekaw'];
+
+    // PROCESS CLEAN CUT FIRST AND CHECK IF THERE ARE OTHER FINISHINGS
+    var other_finishings_test = 0;
+    var anchor;
+    for (var j = 0; j < configuration_object[i].sides.length; j++) {
+      var t_obj = configuration_object[i].sides[j];
+      if (t_obj.type == finishings[0]) {
+        other_finishings_test++;
+
+        if (t_obj.side == 'top') {
+          anchor = AnchorPosition.BOTTOMCENTER;
+        } else if (t_obj.side == 'left') {
+          anchor = AnchorPosition.MIDDLERIGHT;
+        } else if (t_obj.side == 'right') {
+          anchor = AnchorPosition.MIDDLELEFT;
+        } else if (t_obj.side == 'bottom') {
+          anchor = AnchorPosition.TOPCENTER;
+        }
+
+        app.activeDocument = first_side;
+        frame(fr_size, anchor);
+
+        if (t_obj.side == 'top' || t_obj.side == 'bottom') {
+          app.activeDocument.resizeCanvas(app.activeDocument.width.value, app.activeDocument.height.value + offset, anchor);
+        } else {
+          app.activeDocument.resizeCanvas(app.activeDocument.width.value + offset, app.activeDocument.height.value, anchor);
+        }
+
+        frame(fr_size, anchor);
+        app.activeDocument = second_side;
+
+        if (t_obj.side == 'top' || t_obj.side == 'bottom') {
+          app.activeDocument.resizeImage(parseFloat(app.activeDocument.width.value), parseFloat(app.activeDocument.height.value + offset), null, ResampleMethod.BICUBIC)
+        } else {
+          app.activeDocument.resizeImage(parseFloat(app.activeDocument.width.value + offset), parseFloat(app.activeDocument.height.value), null, ResampleMethod.BICUBIC)
+        }
+
+        frame(fr_size, anchor);
+      }
+    }
+
+
+    var other_finishings = false;
+
+    if (other_finishings_test > 3) {
+      other_finishings = true;
+    }
+
+    alert(other_finishings)
+
+    if (other_finishings) {
+      app.activeDocument = second_side;
+      app.activeDocument.selection.selectAll();
+      app.activeDocument.selection.copy();
+      app.activeDocument.selection.deselect();
+      app.activeDocument = first_side;
+      app.activeDocument.paste();
+      // var pasted = app.activeDocument.activeLayer.duplicate();
+      var pasted = app.activeDocument.activeLayer;
+      pasted.translate(app.activeDocument.width.value, app.activeDocument.height.value);
+      pasted.flipCanvas(Direction.HORIZONTAL);
+      pasted.flipCanvas(Direction.VERTICAL);
+    }
+
+  } // end of modules loop
+} // end of execute function
+
+///////////////////////
