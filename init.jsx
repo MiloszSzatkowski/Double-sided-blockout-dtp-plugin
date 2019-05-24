@@ -4,7 +4,8 @@
 
 ////////////////////////////////// ONLY OPERATE IN PHOTOSHOP ***********************
 
-#target photoshop
+#
+target photoshop
 
 ////////////////////////////////// GLOBAL VARIABLES START ***********************
 
@@ -122,8 +123,10 @@ var s_fr_size_UI_d = bottom_first_row.add('statictext', u, 'Thin outline | Cienk
 var s_fr_size_UI = bottom_first_row.add('edittext', u, 0.03);
 var xl_fr_size_UI_d = bottom_first_row.add('statictext', u, 'Big outline | Gruba linia:');
 var xl_fr_size_UI = bottom_first_row.add('edittext', u, 0.1);
-var offset_UI_d = bottom_first_row.add('statictext', u, 'Offset | Overlap:');
+var offset_UI_d = bottom_first_row.add('statictext', u, 'Offset | offset:');
 var offset_UI = bottom_first_row.add('edittext', u, 1);
+var weld_overlap_UI_d = bottom_first_row.add('statictext', u, 'Weld overlap | Overlap zgrzewu:');
+var weld_overlap_UI = bottom_first_row.add('edittext', u, 0.5);
 
 var help = bottom_third_row.add('button', u, 'HELP ?');
 
@@ -413,8 +416,12 @@ function Module() {
     var _descriptions = ww.add('group {orientation: "column"}, alignChildren: ["fill", "fill"]');
     _descriptions.alignment = ["center", "center"];
 
-    _descriptions.add('statictext', u, widget_desc_eng, {multiline: true});
-    _descriptions.add('statictext', u, widget_desc_pl, {multiline: true});
+    _descriptions.add('statictext', u, widget_desc_eng, {
+      multiline: true
+    });
+    _descriptions.add('statictext', u, widget_desc_pl, {
+      multiline: true
+    });
 
     _descriptions.add('panel {alignment: "fill"}');
 
@@ -504,7 +511,10 @@ function Module() {
         if (job == 'overwrite') {
           delete_configuration();
         }
-        config_file_json.all.push({"name": user_name, "sides": []});
+        config_file_json.all.push({
+          "name": user_name,
+          "sides": []
+        });
         for (var s = 0; s < 4; s++) {
           config_file_json.all[config_file_json.all.length - 1].sides.push({
             "finishing_type": inner_drop[s].selection.text,
@@ -839,53 +849,51 @@ function prepare_data_before_execution() {
       "save_manual_output": v_top_02.children[4].text,
       "file_01": top_01.children[1].selection.text,
       "file_02": top_02.children[1].selection.text,
-      "sides": [
-        {
-          "side": "top",
-          "type": bott_00.children[1].children[0].children[0].text,
-          "finishing_value": bott_00.children[1].children[0].children[1].text,
+      "sides": [{
+        "side": "top",
+        "type": bott_00.children[1].children[0].children[0].text,
+        "finishing_value": bott_00.children[1].children[0].children[1].text,
 
-          "eyelets_distance": bott_00.children[1].children[1].children[1].text,
-          "eyelets_size": bott_00.children[1].children[1].children[2].text,
-          "eyelets_cmyk": bott_00.children[1].children[1].children[3].text,
-          "eyelets_outline_bool": (bott_00.children[1].children[1].children[4].text == 'o'),
+        "eyelets_distance": bott_00.children[1].children[1].children[1].text,
+        "eyelets_size": bott_00.children[1].children[1].children[2].text,
+        "eyelets_cmyk": bott_00.children[1].children[1].children[3].text,
+        "eyelets_outline_bool": (bott_00.children[1].children[1].children[4].text == 'o'),
 
-          "eyelets_bool": (bott_00.children[1].children[1].children[1].text != 'xxx' && bott_00.children[1].children[1].children[2].text != 'xxx' && bott_00.children[1].children[1].children[3].text != 'xxx')
-        }, {
-          "side": "right",
-          "type": bott_00.children[3].children[0].children[0].text,
-          "finishing_value": bott_00.children[3].children[0].children[1].text,
+        "eyelets_bool": (bott_00.children[1].children[1].children[1].text != 'xxx' && bott_00.children[1].children[1].children[2].text != 'xxx' && bott_00.children[1].children[1].children[3].text != 'xxx')
+      }, {
+        "side": "right",
+        "type": bott_00.children[3].children[0].children[0].text,
+        "finishing_value": bott_00.children[3].children[0].children[1].text,
 
-          "eyelets_distance": bott_00.children[3].children[1].children[1].text,
-          "eyelets_size": bott_00.children[3].children[1].children[2].text,
-          "eyelets_cmyk": bott_00.children[3].children[1].children[3].text,
-          "eyelets_outline_bool": (bott_00.children[1].children[1].children[4].text == 'o'),
+        "eyelets_distance": bott_00.children[3].children[1].children[1].text,
+        "eyelets_size": bott_00.children[3].children[1].children[2].text,
+        "eyelets_cmyk": bott_00.children[3].children[1].children[3].text,
+        "eyelets_outline_bool": (bott_00.children[1].children[1].children[4].text == 'o'),
 
-          "eyelets_bool": (bott_00.children[3].children[1].children[1].text != 'xxx' && bott_00.children[3].children[1].children[2].text != 'xxx' && bott_00.children[3].children[1].children[3].text != 'xxx')
-        }, {
-          "side": "left",
-          "type": bott_00.children[5].children[0].children[0].text,
-          "finishing_value": bott_00.children[5].children[0].children[1].text,
+        "eyelets_bool": (bott_00.children[3].children[1].children[1].text != 'xxx' && bott_00.children[3].children[1].children[2].text != 'xxx' && bott_00.children[3].children[1].children[3].text != 'xxx')
+      }, {
+        "side": "left",
+        "type": bott_00.children[5].children[0].children[0].text,
+        "finishing_value": bott_00.children[5].children[0].children[1].text,
 
-          "eyelets_distance": bott_00.children[5].children[1].children[1].text,
-          "eyelets_size": bott_00.children[5].children[1].children[2].text,
-          "eyelets_cmyk": bott_00.children[5].children[1].children[3].text,
-          "eyelets_outline_bool": (bott_00.children[1].children[1].children[4].text == 'o'),
+        "eyelets_distance": bott_00.children[5].children[1].children[1].text,
+        "eyelets_size": bott_00.children[5].children[1].children[2].text,
+        "eyelets_cmyk": bott_00.children[5].children[1].children[3].text,
+        "eyelets_outline_bool": (bott_00.children[1].children[1].children[4].text == 'o'),
 
-          "eyelets_bool": (bott_00.children[5].children[1].children[1].text != 'xxx' && bott_00.children[5].children[1].children[2].text != 'xxx' && bott_00.children[5].children[1].children[3].text != 'xxx')
-        }, {
-          "side": "bottom",
-          "type": bott_00.children[7].children[0].children[0].text,
-          "finishing_value": bott_00.children[7].children[0].children[1].text,
+        "eyelets_bool": (bott_00.children[5].children[1].children[1].text != 'xxx' && bott_00.children[5].children[1].children[2].text != 'xxx' && bott_00.children[5].children[1].children[3].text != 'xxx')
+      }, {
+        "side": "bottom",
+        "type": bott_00.children[7].children[0].children[0].text,
+        "finishing_value": bott_00.children[7].children[0].children[1].text,
 
-          "eyelets_distance": bott_00.children[7].children[1].children[1].text,
-          "eyelets_size": bott_00.children[7].children[1].children[2].text,
-          "eyelets_cmyk": bott_00.children[7].children[1].children[3].text,
-          "eyelets_outline_bool": (bott_00.children[1].children[1].children[4].text == 'o'),
+        "eyelets_distance": bott_00.children[7].children[1].children[1].text,
+        "eyelets_size": bott_00.children[7].children[1].children[2].text,
+        "eyelets_cmyk": bott_00.children[7].children[1].children[3].text,
+        "eyelets_outline_bool": (bott_00.children[1].children[1].children[4].text == 'o'),
 
-          "eyelets_bool": (bott_00.children[7].children[1].children[1].text != 'xxx' && bott_00.children[7].children[1].children[2].text != 'xxx' && bott_00.children[7].children[1].children[3].text != 'xxx')
-        }
-      ]
+        "eyelets_bool": (bott_00.children[7].children[1].children[1].text != 'xxx' && bott_00.children[7].children[1].children[2].text != 'xxx' && bott_00.children[7].children[1].children[3].text != 'xxx')
+      }]
 
     } // end of passed_config_obj
   } // end of for loop
@@ -893,7 +901,7 @@ function prepare_data_before_execution() {
   for (var i = 0; i < passed_config_obj.length; i++) {
     if (passed_config_obj[i].file_01 == '' || passed_config_obj[i].file_01 == '') {
       alert('Error in module nr ' + (
-      i + 1) + '\n\nProsze wybrac pliki do przetworzenia\nPlease, select files to proccess');
+        i + 1) + '\n\nProsze wybrac pliki do przetworzenia\nPlease, select files to proccess');
       return;
       break;
     }
@@ -915,6 +923,7 @@ function execute(configuration_object) {
   var s_fr_size = parseFloat(s_fr_size_UI.text);
   var xl_fr_size = parseFloat(xl_fr_size_UI.text);
   var offset = parseFloat(offset_UI.text);
+  var weld_overlap = parseFloat(weld_overlap_UI.text);
 
   var whiteColorObj = new CMYKColor();
   var am = 0;
@@ -936,6 +945,61 @@ function execute(configuration_object) {
   greyColorObj.magenta = cc;
   greyColorObj.yellow = cc;
   greyColorObj.black = cc;
+
+
+  function create_new_solid_white_layer() {
+
+    app.backgroundColor.cmyk = whiteColorObj;
+
+    var idmodalStateChanged = stringIDToTypeID("modalStateChanged");
+    var desc14 = new ActionDescriptor();
+    var idLvl = charIDToTypeID("Lvl ");
+    desc14.putInteger(idLvl, 1);
+    var idStte = charIDToTypeID("Stte");
+    var idStte = charIDToTypeID("Stte");
+    var identer = stringIDToTypeID("enter");
+    desc14.putEnumerated(idStte, idStte, identer);
+    executeAction(idmodalStateChanged, desc14, DialogModes.NO);
+
+    var idmodalStateChanged = stringIDToTypeID("modalStateChanged");
+    var desc15 = new ActionDescriptor();
+    var idLvl = charIDToTypeID("Lvl ");
+    desc15.putInteger(idLvl, 0);
+    var idStte = charIDToTypeID("Stte");
+    var idStte = charIDToTypeID("Stte");
+    var idexit = stringIDToTypeID("exit");
+    desc15.putEnumerated(idStte, idStte, idexit);
+    executeAction(idmodalStateChanged, desc15, DialogModes.NO);
+
+    var idMk = charIDToTypeID("Mk  ");
+    var desc16 = new ActionDescriptor();
+    var idnull = charIDToTypeID("null");
+    var ref3 = new ActionReference();
+    var idcontentLayer = stringIDToTypeID("contentLayer");
+    ref3.putClass(idcontentLayer);
+    desc16.putReference(idnull, ref3);
+    var idUsng = charIDToTypeID("Usng");
+    var desc17 = new ActionDescriptor();
+    var idType = charIDToTypeID("Type");
+    var desc18 = new ActionDescriptor();
+    var idClr = charIDToTypeID("Clr ");
+    var desc19 = new ActionDescriptor();
+    var idCyn = charIDToTypeID("Cyn ");
+    desc19.putDouble(idCyn, 0.000000);
+    var idMgnt = charIDToTypeID("Mgnt");
+    desc19.putDouble(idMgnt, 0.000000);
+    var idYlw = charIDToTypeID("Ylw ");
+    desc19.putDouble(idYlw, 0.000000);
+    var idBlck = charIDToTypeID("Blck");
+    desc19.putDouble(idBlck, 0.000000);
+    var idCMYC = charIDToTypeID("CMYC");
+    desc18.putObject(idClr, idCMYC, desc19);
+    var idsolidColorLayer = stringIDToTypeID("solidColorLayer");
+    desc17.putObject(idType, idsolidColorLayer, desc18);
+    var idcontentLayer = stringIDToTypeID("contentLayer");
+    desc16.putObject(idUsng, idcontentLayer, desc17);
+    executeAction(idMk, desc16, DialogModes.NO);
+  }
 
   function is_in_opened_documents(file_name) {
     for (var j = 0; j < app.documents.length; j++) {
@@ -964,7 +1028,7 @@ function execute(configuration_object) {
     if (color == null || color == undefined) {
       color = blackColorObj;
     }
-    frameSize = frameSize*2;
+    frameSize = frameSize * 2;
     app.backgroundColor.cmyk = color;
     activeDocument.resizeCanvas(app.activeDocument.width.value - frameSize, app.activeDocument.height.value - frameSize, anchor);
     activeDocument.resizeCanvas(app.activeDocument.width.value + frameSize, app.activeDocument.height.value + frameSize, anchor);
@@ -1194,14 +1258,74 @@ function execute(configuration_object) {
       }
       pasted.remove();
 
+      var there_is_overlap_top = false;
+      var there_is_overlap_bottom = false;
+
+      for (var j = 0; j < configuration_object[i].sides.length; j++) {
+        if (configuration_object[i].sides[j].type != finishings[0] && configuration_object[i].sides[j].side == 'top') {
+          there_is_overlap_top = true;
+        }
+        if (configuration_object[i].sides[j].type != finishings[0] && configuration_object[i].sides[j].side == 'bottom') {
+          there_is_overlap_bottom = true;
+        }
+      }
+
+      function resize_layer (layer, size_x, size_y, anchor) {
+          var bounds = layer.bounds;
+          var www = bounds[2].value - bounds[0].value;
+          var hhh = bounds[3].value - bounds[1].value;
+          var newWidth = (100 / www) * size_x;
+          var newHeight = (100 / hhh) * size_y;
+          layer.resize(newWidth, newHeight, anchor);
+      }
+
+      function get_val_finishing (side) {
+        for (var p = 0; p < configuration_object[i].sides.length; p++) {
+          if (configuration_object[i].sides[p].side == side) {
+            if (configuration_object[i].sides[p].type == finishings[3]) { // sleeve
+              if (parseFloat(configuration_object[i].sides[p].finishing_value) < parseFloat(treshold_weld.text)) {
+                return configuration_object[i].sides[p].finishing_value + parseFloat(small_weld.text);
+              } else {
+                return configuration_object[i].sides[p].finishing_value + parseFloat(big_weld.text);
+              }
+            } else {
+              return configuration_object[i].sides[p].finishing_value;
+            }
+          }
+        }
+      }
+
+      //CREATE WHITE BLOCKS FOR WELD TO NOT STICK TO PAINT
+      var block;
+      for (var j = 0; j < configuration_object[i].sides.length; j++) {
+        if (there_is_overlap_top && configuration_object[i].sides[j].type != finishings[0] && configuration_object[i].sides[j].side == 'left') {
+          create_new_solid_white_layer();
+          resize_layer(app.activeDocument.activeLayer, parseFloat(get_val_finishing('top')) +  offset - weld_overlap, AnchorPosition.TOPLEFT);
+          var c_w = app.activeDocument.activeLayer.bounds[2].value-app.activeDocument.activeLayer.bounds[0].value;
+          app.activeDocument.activeLayer.translate(-c_w,0);
+        }
+        if (there_is_overlap_bottom && configuration_object[i].sides[j].type != finishings[0] && configuration_object[i].sides[j].side == 'left') {
+          create_new_solid_white_layer();
+          resize_layer(app.activeDocument.activeLayer, parseFloat(get_val_finishing('bottom')) +  offset - weld_overlap, AnchorPosition.BOTTOMLEFT);
+          var c_w = app.activeDocument.activeLayer.bounds[2].value-app.activeDocument.activeLayer.bounds[0].value;
+          app.activeDocument.activeLayer.translate(-c_w,0);
+        }
+        if (there_is_overlap_top && configuration_object[i].sides[j].type != finishings[0] && configuration_object[i].sides[j].side == 'right') {
+          create_new_solid_white_layer();
+          resize_layer(app.activeDocument.activeLayer, parseFloat(get_val_finishing('top')) +  offset - weld_overlap, AnchorPosition.TOPRIGHT);
+          var c_w = app.activeDocument.activeLayer.bounds[2].value-app.activeDocument.activeLayer.bounds[0].value;
+          app.activeDocument.activeLayer.translate(c_w,0);
+        }
+        if (there_is_overlap_bottom && configuration_object[i].sides[j].type != finishings[0] && configuration_object[i].sides[j].side == 'right') {
+          create_new_solid_white_layer();
+          resize_layer(app.activeDocument.activeLayer, parseFloat(get_val_finishing('bottom')) +  offset - weld_overlap, AnchorPosition.BOTTOMRIGHT);
+          var c_w = app.activeDocument.activeLayer.bounds[2].value-app.activeDocument.activeLayer.bounds[0].value;
+          app.activeDocument.activeLayer.translate(c_w,0);
+        }
+      }
+
       //UNCOVER OVERFLOWS
       // ['cut | dociecie' , 'sm weld | maly zgrzew', 'xl weld | duzy zgrzew', 'sleeve | rekaw'];
-      var final_uncover_arr = {
-        "top": 0,
-        "left": 0,
-        "right": 0,
-        "bottom": 0
-      };
       for (var j = 0; j < configuration_object[i].sides.length; j++) {
         var t_obj = configuration_object[i].sides[j];
         var fin_val = parseFloat(t_obj.finishing_value);
@@ -1252,5 +1376,4 @@ function finish_and_save() {
   // alert('done')
   W.close();
 }
-
 ///////////////////////
