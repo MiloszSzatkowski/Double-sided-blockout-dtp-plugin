@@ -4,8 +4,7 @@
 
 ////////////////////////////////// ONLY OPERATE IN PHOTOSHOP ***********************
 
-#
-target photoshop
+#target photoshop
 
 ////////////////////////////////// GLOBAL VARIABLES START ***********************
 
@@ -30,10 +29,10 @@ function updateUILayout(el) {
   el.layout.layout(true);
 }
 
-// //////////////////////  WINDOW
+// ////////////////////  WINDOW
 
 var W = new Window('dialog {orientation: "row"}', u_window_title);
-W.maximumSize.width = 1250;
+W.maximumSize.width = 1270;
 W.maximumSize.height = 700;
 
 W.minimumSize.width = W.maximumSize.width - 10;
@@ -125,8 +124,10 @@ var xl_fr_size_UI_d = bottom_first_row.add('statictext', u, 'Big outline | Gruba
 var xl_fr_size_UI = bottom_first_row.add('edittext', u, 0.1);
 var offset_UI_d = bottom_first_row.add('statictext', u, 'Offset | offset:');
 var offset_UI = bottom_first_row.add('edittext', u, 1);
-var weld_overlap_UI_d = bottom_first_row.add('statictext', u, 'Weld overlap | Overlap zgrzewu:');
+var weld_overlap_UI_d = bottom_first_row.add('statictext', u, 'Inner offset | Offset w srodku:');
 var weld_overlap_UI = bottom_first_row.add('edittext', u, 0.5);
+var blocks_UI = bottom_first_row.add('checkbox', u, 'White blocks | Biale bloki');
+blocks_UI.value = true;
 
 var help = bottom_third_row.add('button', u, 'HELP ?');
 
@@ -416,12 +417,8 @@ function Module() {
     var _descriptions = ww.add('group {orientation: "column"}, alignChildren: ["fill", "fill"]');
     _descriptions.alignment = ["center", "center"];
 
-    _descriptions.add('statictext', u, widget_desc_eng, {
-      multiline: true
-    });
-    _descriptions.add('statictext', u, widget_desc_pl, {
-      multiline: true
-    });
+    _descriptions.add('statictext', u, widget_desc_eng, {multiline: true});
+    _descriptions.add('statictext', u, widget_desc_pl, {multiline: true});
 
     _descriptions.add('panel {alignment: "fill"}');
 
@@ -511,10 +508,7 @@ function Module() {
         if (job == 'overwrite') {
           delete_configuration();
         }
-        config_file_json.all.push({
-          "name": user_name,
-          "sides": []
-        });
+        config_file_json.all.push({"name": user_name, "sides": []});
         for (var s = 0; s < 4; s++) {
           config_file_json.all[config_file_json.all.length - 1].sides.push({
             "finishing_type": inner_drop[s].selection.text,
@@ -849,51 +843,53 @@ function prepare_data_before_execution() {
       "save_manual_output": v_top_02.children[4].text,
       "file_01": top_01.children[1].selection.text,
       "file_02": top_02.children[1].selection.text,
-      "sides": [{
-        "side": "top",
-        "type": bott_00.children[1].children[0].children[0].text,
-        "finishing_value": bott_00.children[1].children[0].children[1].text,
+      "sides": [
+        {
+          "side": "top",
+          "type": bott_00.children[1].children[0].children[0].text,
+          "finishing_value": bott_00.children[1].children[0].children[1].text,
 
-        "eyelets_distance": bott_00.children[1].children[1].children[1].text,
-        "eyelets_size": bott_00.children[1].children[1].children[2].text,
-        "eyelets_cmyk": bott_00.children[1].children[1].children[3].text,
-        "eyelets_outline_bool": (bott_00.children[1].children[1].children[4].text == 'o'),
+          "eyelets_distance": bott_00.children[1].children[1].children[1].text,
+          "eyelets_size": bott_00.children[1].children[1].children[2].text,
+          "eyelets_cmyk": bott_00.children[1].children[1].children[3].text,
+          "eyelets_outline_bool": (bott_00.children[1].children[1].children[4].text == 'o'),
 
-        "eyelets_bool": (bott_00.children[1].children[1].children[1].text != 'xxx' && bott_00.children[1].children[1].children[2].text != 'xxx' && bott_00.children[1].children[1].children[3].text != 'xxx')
-      }, {
-        "side": "right",
-        "type": bott_00.children[3].children[0].children[0].text,
-        "finishing_value": bott_00.children[3].children[0].children[1].text,
+          "eyelets_bool": (bott_00.children[1].children[1].children[1].text != 'xxx' && bott_00.children[1].children[1].children[2].text != 'xxx' && bott_00.children[1].children[1].children[3].text != 'xxx')
+        }, {
+          "side": "right",
+          "type": bott_00.children[3].children[0].children[0].text,
+          "finishing_value": bott_00.children[3].children[0].children[1].text,
 
-        "eyelets_distance": bott_00.children[3].children[1].children[1].text,
-        "eyelets_size": bott_00.children[3].children[1].children[2].text,
-        "eyelets_cmyk": bott_00.children[3].children[1].children[3].text,
-        "eyelets_outline_bool": (bott_00.children[1].children[1].children[4].text == 'o'),
+          "eyelets_distance": bott_00.children[3].children[1].children[1].text,
+          "eyelets_size": bott_00.children[3].children[1].children[2].text,
+          "eyelets_cmyk": bott_00.children[3].children[1].children[3].text,
+          "eyelets_outline_bool": (bott_00.children[1].children[1].children[4].text == 'o'),
 
-        "eyelets_bool": (bott_00.children[3].children[1].children[1].text != 'xxx' && bott_00.children[3].children[1].children[2].text != 'xxx' && bott_00.children[3].children[1].children[3].text != 'xxx')
-      }, {
-        "side": "left",
-        "type": bott_00.children[5].children[0].children[0].text,
-        "finishing_value": bott_00.children[5].children[0].children[1].text,
+          "eyelets_bool": (bott_00.children[3].children[1].children[1].text != 'xxx' && bott_00.children[3].children[1].children[2].text != 'xxx' && bott_00.children[3].children[1].children[3].text != 'xxx')
+        }, {
+          "side": "left",
+          "type": bott_00.children[5].children[0].children[0].text,
+          "finishing_value": bott_00.children[5].children[0].children[1].text,
 
-        "eyelets_distance": bott_00.children[5].children[1].children[1].text,
-        "eyelets_size": bott_00.children[5].children[1].children[2].text,
-        "eyelets_cmyk": bott_00.children[5].children[1].children[3].text,
-        "eyelets_outline_bool": (bott_00.children[1].children[1].children[4].text == 'o'),
+          "eyelets_distance": bott_00.children[5].children[1].children[1].text,
+          "eyelets_size": bott_00.children[5].children[1].children[2].text,
+          "eyelets_cmyk": bott_00.children[5].children[1].children[3].text,
+          "eyelets_outline_bool": (bott_00.children[1].children[1].children[4].text == 'o'),
 
-        "eyelets_bool": (bott_00.children[5].children[1].children[1].text != 'xxx' && bott_00.children[5].children[1].children[2].text != 'xxx' && bott_00.children[5].children[1].children[3].text != 'xxx')
-      }, {
-        "side": "bottom",
-        "type": bott_00.children[7].children[0].children[0].text,
-        "finishing_value": bott_00.children[7].children[0].children[1].text,
+          "eyelets_bool": (bott_00.children[5].children[1].children[1].text != 'xxx' && bott_00.children[5].children[1].children[2].text != 'xxx' && bott_00.children[5].children[1].children[3].text != 'xxx')
+        }, {
+          "side": "bottom",
+          "type": bott_00.children[7].children[0].children[0].text,
+          "finishing_value": bott_00.children[7].children[0].children[1].text,
 
-        "eyelets_distance": bott_00.children[7].children[1].children[1].text,
-        "eyelets_size": bott_00.children[7].children[1].children[2].text,
-        "eyelets_cmyk": bott_00.children[7].children[1].children[3].text,
-        "eyelets_outline_bool": (bott_00.children[1].children[1].children[4].text == 'o'),
+          "eyelets_distance": bott_00.children[7].children[1].children[1].text,
+          "eyelets_size": bott_00.children[7].children[1].children[2].text,
+          "eyelets_cmyk": bott_00.children[7].children[1].children[3].text,
+          "eyelets_outline_bool": (bott_00.children[1].children[1].children[4].text == 'o'),
 
-        "eyelets_bool": (bott_00.children[7].children[1].children[1].text != 'xxx' && bott_00.children[7].children[1].children[2].text != 'xxx' && bott_00.children[7].children[1].children[3].text != 'xxx')
-      }]
+          "eyelets_bool": (bott_00.children[7].children[1].children[1].text != 'xxx' && bott_00.children[7].children[1].children[2].text != 'xxx' && bott_00.children[7].children[1].children[3].text != 'xxx')
+        }
+      ]
 
     } // end of passed_config_obj
   } // end of for loop
@@ -901,7 +897,7 @@ function prepare_data_before_execution() {
   for (var i = 0; i < passed_config_obj.length; i++) {
     if (passed_config_obj[i].file_01 == '' || passed_config_obj[i].file_01 == '') {
       alert('Error in module nr ' + (
-        i + 1) + '\n\nProsze wybrac pliki do przetworzenia\nPlease, select files to proccess');
+      i + 1) + '\n\nProsze wybrac pliki do przetworzenia\nPlease, select files to proccess');
       return;
       break;
     }
@@ -918,458 +914,482 @@ function prepare_data_before_execution() {
 // ***************************** EXECUTE ***************************** ***************************** *****************************
 //
 function execute(configuration_object) {
+  try {
+    preferences.rulerUnits = Units.CM;
+    var s_fr_size = parseFloat(s_fr_size_UI.text);
+    var xl_fr_size = parseFloat(xl_fr_size_UI.text);
+    var offset = parseFloat(offset_UI.text);
+    var weld_overlap = parseFloat(weld_overlap_UI.text);
 
-  preferences.rulerUnits = Units.CM;
-  var s_fr_size = parseFloat(s_fr_size_UI.text);
-  var xl_fr_size = parseFloat(xl_fr_size_UI.text);
-  var offset = parseFloat(offset_UI.text);
-  var weld_overlap = parseFloat(weld_overlap_UI.text);
+    var whiteColorObj = new CMYKColor();
+    var am = 0;
+    whiteColorObj.cyan = am;
+    whiteColorObj.magenta = am;
+    whiteColorObj.yellow = am;
+    whiteColorObj.black = am;
 
-  var whiteColorObj = new CMYKColor();
-  var am = 0;
-  whiteColorObj.cyan = am;
-  whiteColorObj.magenta = am;
-  whiteColorObj.yellow = am;
-  whiteColorObj.black = am;
+    var blackColorObj = new CMYKColor();
+    var bm = 100;
+    blackColorObj.cyan = 0;
+    blackColorObj.magenta = 0;
+    blackColorObj.yellow = 0;
+    blackColorObj.black = bm;
 
-  var blackColorObj = new CMYKColor();
-  var bm = 100;
-  blackColorObj.cyan = 0;
-  blackColorObj.magenta = 0;
-  blackColorObj.yellow = 0;
-  blackColorObj.black = bm;
+    var greyColorObj = new CMYKColor();
+    var cc = 20;
+    greyColorObj.cyan = cc;
+    greyColorObj.magenta = cc;
+    greyColorObj.yellow = cc;
+    greyColorObj.black = cc;
 
-  var greyColorObj = new CMYKColor();
-  var cc = 20;
-  greyColorObj.cyan = cc;
-  greyColorObj.magenta = cc;
-  greyColorObj.yellow = cc;
-  greyColorObj.black = cc;
-
-
-  function create_new_solid_white_layer() {
-
-    app.backgroundColor.cmyk = whiteColorObj;
-
-    var idmodalStateChanged = stringIDToTypeID("modalStateChanged");
-    var desc14 = new ActionDescriptor();
-    var idLvl = charIDToTypeID("Lvl ");
-    desc14.putInteger(idLvl, 1);
-    var idStte = charIDToTypeID("Stte");
-    var idStte = charIDToTypeID("Stte");
-    var identer = stringIDToTypeID("enter");
-    desc14.putEnumerated(idStte, idStte, identer);
-    executeAction(idmodalStateChanged, desc14, DialogModes.NO);
-
-    var idmodalStateChanged = stringIDToTypeID("modalStateChanged");
-    var desc15 = new ActionDescriptor();
-    var idLvl = charIDToTypeID("Lvl ");
-    desc15.putInteger(idLvl, 0);
-    var idStte = charIDToTypeID("Stte");
-    var idStte = charIDToTypeID("Stte");
-    var idexit = stringIDToTypeID("exit");
-    desc15.putEnumerated(idStte, idStte, idexit);
-    executeAction(idmodalStateChanged, desc15, DialogModes.NO);
-
-    var idMk = charIDToTypeID("Mk  ");
-    var desc16 = new ActionDescriptor();
-    var idnull = charIDToTypeID("null");
-    var ref3 = new ActionReference();
-    var idcontentLayer = stringIDToTypeID("contentLayer");
-    ref3.putClass(idcontentLayer);
-    desc16.putReference(idnull, ref3);
-    var idUsng = charIDToTypeID("Usng");
-    var desc17 = new ActionDescriptor();
-    var idType = charIDToTypeID("Type");
-    var desc18 = new ActionDescriptor();
-    var idClr = charIDToTypeID("Clr ");
-    var desc19 = new ActionDescriptor();
-    var idCyn = charIDToTypeID("Cyn ");
-    desc19.putDouble(idCyn, 0.000000);
-    var idMgnt = charIDToTypeID("Mgnt");
-    desc19.putDouble(idMgnt, 0.000000);
-    var idYlw = charIDToTypeID("Ylw ");
-    desc19.putDouble(idYlw, 0.000000);
-    var idBlck = charIDToTypeID("Blck");
-    desc19.putDouble(idBlck, 0.000000);
-    var idCMYC = charIDToTypeID("CMYC");
-    desc18.putObject(idClr, idCMYC, desc19);
-    var idsolidColorLayer = stringIDToTypeID("solidColorLayer");
-    desc17.putObject(idType, idsolidColorLayer, desc18);
-    var idcontentLayer = stringIDToTypeID("contentLayer");
-    desc16.putObject(idUsng, idcontentLayer, desc17);
-    executeAction(idMk, desc16, DialogModes.NO);
-  }
-
-  function is_in_opened_documents(file_name) {
-    for (var j = 0; j < app.documents.length; j++) {
-      if (app.documents[j].name.toString() == file_name) {
-        return true;
-        break;
-      }
-    }
-    return false;
-  }
-
-  function get_index_of_a_file(file_name) {
-    for (var j = 0; j < app.documents.length; j++) {
-      if (app.documents[j].name.toString() == file_name) {
-        return j;
-        break;
-      }
-    }
-    return;
-  }
-
-  function frame(frameSize, anchor, color) {
-    if (anchor == null || anchor == undefined) {
-      anchor = AnchorPosition.MIDDLECENTER;
-    }
-    if (color == null || color == undefined) {
-      color = blackColorObj;
-    }
-    frameSize = frameSize * 2;
-    app.backgroundColor.cmyk = color;
-    activeDocument.resizeCanvas(app.activeDocument.width.value - frameSize, app.activeDocument.height.value - frameSize, anchor);
-    activeDocument.resizeCanvas(app.activeDocument.width.value + frameSize, app.activeDocument.height.value + frameSize, anchor);
-    app.backgroundColor.cmyk = whiteColorObj;
-  }
-
-  for (var i = 0; i < configuration_object.length; i++) {
-
-    //GET FILES
-
-    var first_side,
-      second_side;
-
-    if (configuration_object[i].file_01.indexOf('/') !== -1) { // is a path
-      if (!is_in_opened_documents(configuration_object[i].file_01)) {
-        first_side = app.open(File(configuration_object[i].file_01));
-      } else {
-        first_side = app.documents[get_index_of_a_file(configuration_object[i].file_01)];
-      }
-    } else {
-      if (is_in_opened_documents(configuration_object[i].file_01)) {
-        first_side = app.documents[get_index_of_a_file(configuration_object[i].file_01)];
-      }
-    }
-
-    if (configuration_object[i].file_02.indexOf('/') !== -1) { // is a path
-      if (!is_in_opened_documents(configuration_object[i].file_02)) {
-        second_side = app.open(File(configuration_object[i].file_02));
-      } else {
-        second_side = app.documents[get_index_of_a_file(configuration_object[i].file_02)];
-      }
-    } else {
-      if (is_in_opened_documents(configuration_object[i].file_02)) {
-        second_side = app.documents[get_index_of_a_file(configuration_object[i].file_02)];
-      }
-    }
-
-    //CREATE NEW DOCUMENT IF THE FILES ARE THE SAME
-    if (first_side.name.toString() == second_side.name.toString()) {
-      second_side = app.documents.add(first_side.width.value, first_side.height.value, first_side.resolution, (first_side.name + '_02'), NewDocumentMode.CMYK);
-      app.activeDocument = first_side;
-      app.activeDocument.flatten();
-      app.activeDocument.selection.selectAll();
-      app.activeDocument.selection.copy();
-      app.activeDocument.selection.deselect();
-      app.activeDocument = second_side;
-      app.activeDocument.paste();
-      app.activeDocument.flatten();
-    }
-
-    //CONVERT TO CMYK AND FLATTEN
-    for (var j = 0; j < [first_side, second_side].length; j++) {
-      app.activeDocument.flatten();
-      app.activeDocument = [first_side, second_side][j];
-      var idCnvM = charIDToTypeID("CnvM");
-      var desc54 = new ActionDescriptor();
-      var idT = charIDToTypeID("T   ");
-      var idCMYM = charIDToTypeID("CMYM");
-      desc54.putClass(idT, idCMYM);
-      executeAction(idCnvM, desc54, DialogModes.NO);
-    }
-
-    //MAKE THE SAME SIZE
-    if (first_side.width.value !== second_side.width.value || first_side.height.value !== second_side.height.value || first_side.resolution !== second_side.resolution) {
-      second_side.resizeImage(first_side.width.value, first_side.height.value, first_side.resolution, ResampleMethod.BICUBIC);
-    }
-
-    // alert(first_side)
-    // alert(second_side)
-
-    // MAKE FINISHINGS
-
-    // HELPER
-    // var finishings =
-    // ['cut | dociecie' , 'sm weld | maly zgrzew', 'xl weld | duzy zgrzew', 'sleeve | rekaw'];
-
-    // CHECK IF THERE ARE OTHER FINISHINGS
-    var other_finishings_test = 0;
-    var anchor;
-    for (var j = 0; j < configuration_object[i].sides.length; j++) {
-      var t_obj = configuration_object[i].sides[j];
-      if (t_obj.type == finishings[0]) {
-        other_finishings_test++;
-      }
-    }
-
-    var other_finishings = true;
-    if (other_finishings_test === 4) {
-      other_finishings = false;
-    }
-
-    if (!other_finishings) { // there is only clean cut
-      // PROCESS CLEAN CUT ON ALL SIDES
-      anchor = AnchorPosition.MIDDLECENTER;
-
-      app.activeDocument = second_side;
-      frame(xl_fr_size, anchor);
-
-      app.activeDocument.resizeCanvas(app.activeDocument.width.value + offset, app.activeDocument.height.value + offset, anchor);
-      frame(xl_fr_size, anchor);
-
-      app.activeDocument = first_side;
-      app.activeDocument.resizeImage(app.activeDocument.width.value + offset, app.activeDocument.height.value + offset, null, ResampleMethod.BICUBIC)
-
-      frame(xl_fr_size, anchor);
-      app.activeDocument = second_side;
-
-      finish_and_save();
-      return;
-      break;
-    }
-
-    function flip_layer(direction) {
-      if (direction === 'HORIZONTAL') {
-        var idTrnf = charIDToTypeID("Trnf");
-        var desc26 = new ActionDescriptor();
-        var idnull = charIDToTypeID("null");
-        var ref16 = new ActionReference();
-        var idLyr = charIDToTypeID("Lyr ");
-        var idOrdn = charIDToTypeID("Ordn");
-        var idTrgt = charIDToTypeID("Trgt");
-        ref16.putEnumerated(idLyr, idOrdn, idTrgt);
-        desc26.putReference(idnull, ref16);
-        var idFTcs = charIDToTypeID("FTcs");
-        var idQCSt = charIDToTypeID("QCSt");
-        var idQcsa = charIDToTypeID("Qcsa");
-        desc26.putEnumerated(idFTcs, idQCSt, idQcsa);
-        var idOfst = charIDToTypeID("Ofst");
-        var desc27 = new ActionDescriptor();
-        var idHrzn = charIDToTypeID("Hrzn");
-        var idRlt = charIDToTypeID("#Rlt");
-        desc27.putUnitDouble(idHrzn, idRlt, 0.000000);
-        var idVrtc = charIDToTypeID("Vrtc");
-        var idRlt = charIDToTypeID("#Rlt");
-        desc27.putUnitDouble(idVrtc, idRlt, 0.000000);
-        var idOfst = charIDToTypeID("Ofst");
-        desc26.putObject(idOfst, idOfst, desc27);
-        var idWdth = charIDToTypeID("Wdth");
-        var idPrc = charIDToTypeID("#Prc");
-        desc26.putUnitDouble(idWdth, idPrc, -100.000000);
-        var idIntr = charIDToTypeID("Intr");
-        var idIntp = charIDToTypeID("Intp");
-        var idNrst = charIDToTypeID("Nrst");
-        desc26.putEnumerated(idIntr, idIntp, idNrst);
-        executeAction(idTrnf, desc26, DialogModes.NO);
-      } else if (direction === 'VERTICAL') {
-        var idTrnf = charIDToTypeID("Trnf");
-        var desc28 = new ActionDescriptor();
-        var idnull = charIDToTypeID("null");
-        var ref17 = new ActionReference();
-        var idLyr = charIDToTypeID("Lyr ");
-        var idOrdn = charIDToTypeID("Ordn");
-        var idTrgt = charIDToTypeID("Trgt");
-        ref17.putEnumerated(idLyr, idOrdn, idTrgt);
-        desc28.putReference(idnull, ref17);
-        var idFTcs = charIDToTypeID("FTcs");
-        var idQCSt = charIDToTypeID("QCSt");
-        var idQcsa = charIDToTypeID("Qcsa");
-        desc28.putEnumerated(idFTcs, idQCSt, idQcsa);
-        var idOfst = charIDToTypeID("Ofst");
-        var desc29 = new ActionDescriptor();
-        var idHrzn = charIDToTypeID("Hrzn");
-        var idRlt = charIDToTypeID("#Rlt");
-        desc29.putUnitDouble(idHrzn, idRlt, 0.000000);
-        var idVrtc = charIDToTypeID("Vrtc");
-        var idRlt = charIDToTypeID("#Rlt");
-        desc29.putUnitDouble(idVrtc, idRlt, 0.000000);
-        var idOfst = charIDToTypeID("Ofst");
-        desc28.putObject(idOfst, idOfst, desc29);
-        var idHght = charIDToTypeID("Hght");
-        var idPrc = charIDToTypeID("#Prc");
-        desc28.putUnitDouble(idHght, idPrc, -100.000000);
-        var idIntr = charIDToTypeID("Intr");
-        var idIntp = charIDToTypeID("Intp");
-        var idNrst = charIDToTypeID("Nrst");
-        desc28.putEnumerated(idIntr, idIntp, idNrst);
-        executeAction(idTrnf, desc28, DialogModes.NO);
-      }
-    }
-
-    function process_copy_of_layer(layer, side) {
-      app.activeDocument.activeLayer = layer;
-      switch (side) {
-        case 'top':
-          flip_layer('HORIZONTAL');
-          flip_layer('VERTICAL');
-          layer_copy.translate(0, -app.activeDocument.height.value);
+    function is_in_opened_documents(file_name) {
+      for (var j = 0; j < app.documents.length; j++) {
+        if (app.documents[j].name.toString() == file_name) {
+          return true;
           break;
-        case 'right':
-          layer_copy.translate(app.activeDocument.width.value, 0);
+        }
+      }
+      return false;
+    }
+
+    function get_index_of_a_file(file_name) {
+      for (var j = 0; j < app.documents.length; j++) {
+        if (app.documents[j].name.toString() == file_name) {
+          return j;
           break;
-        case 'left':
-          layer_copy.translate(-app.activeDocument.width.value, 0);
-          break;
-        case 'bottom':
-          flip_layer('HORIZONTAL');
-          flip_layer('VERTICAL');
-          layer_copy.translate(0, app.activeDocument.height.value);
-          break;
+        }
       }
       return;
     }
 
-    if (other_finishings) {
+    function frame(frameSize, anchor, color) {
+      if (anchor == null || anchor == undefined) {
+        anchor = AnchorPosition.MIDDLECENTER;
+      }
+      if (color == null || color == undefined) {
+        color = blackColorObj;
+      }
+      frameSize = frameSize * 2;
+      app.backgroundColor.cmyk = color;
+      activeDocument.resizeCanvas(app.activeDocument.width.value - frameSize, app.activeDocument.height.value - frameSize, anchor);
+      activeDocument.resizeCanvas(app.activeDocument.width.value + frameSize, app.activeDocument.height.value + frameSize, anchor);
+      app.backgroundColor.cmyk = whiteColorObj;
+    }
 
-      app.activeDocument = second_side;
-      app.activeDocument.selection.selectAll();
-      app.activeDocument.selection.copy();
-      app.activeDocument.selection.deselect();
-      app.activeDocument = first_side;
-      frame(s_fr_size, null, greyColorObj);
-      app.activeDocument.paste();
-      var pasted = app.activeDocument.activeLayer;
+    for (var i = 0; i < configuration_object.length; i++) {
 
-      //1ST SIDE
+      //GET FILES
 
-      //MAKE EYELETS HERE
+      var first_side,
+        second_side;
 
-      //PREPARE OVERFLOWS
+      if (configuration_object[i].file_01.indexOf('/') !== -1) { // is a path
+        if (!is_in_opened_documents(configuration_object[i].file_01)) {
+          first_side = app.open(File(configuration_object[i].file_01));
+        } else {
+          first_side = app.documents[get_index_of_a_file(configuration_object[i].file_01)];
+        }
+      } else {
+        if (is_in_opened_documents(configuration_object[i].file_01)) {
+          first_side = app.documents[get_index_of_a_file(configuration_object[i].file_01)];
+        }
+      }
+
+      if (configuration_object[i].file_02.indexOf('/') !== -1) { // is a path
+        if (!is_in_opened_documents(configuration_object[i].file_02)) {
+          second_side = app.open(File(configuration_object[i].file_02));
+        } else {
+          second_side = app.documents[get_index_of_a_file(configuration_object[i].file_02)];
+        }
+      } else {
+        if (is_in_opened_documents(configuration_object[i].file_02)) {
+          second_side = app.documents[get_index_of_a_file(configuration_object[i].file_02)];
+        }
+      }
+
+      //CREATE NEW DOCUMENT IF THE FILES ARE THE SAME
+      if (first_side.name.toString() == second_side.name.toString()) {
+        second_side = app.documents.add(first_side.width.value, first_side.height.value, first_side.resolution, (first_side.name + '_02'), NewDocumentMode.CMYK);
+        app.activeDocument = first_side;
+        app.activeDocument.flatten();
+        app.activeDocument.selection.selectAll();
+        app.activeDocument.selection.copy();
+        app.activeDocument.selection.deselect();
+        app.activeDocument = second_side;
+        app.activeDocument.paste();
+        app.activeDocument.flatten();
+      }
+
+      //CONVERT TO CMYK AND FLATTEN
+      for (var j = 0; j < [first_side, second_side].length; j++) {
+        app.activeDocument.flatten();
+        app.activeDocument = [first_side, second_side][j];
+        var idCnvM = charIDToTypeID("CnvM");
+        var desc54 = new ActionDescriptor();
+        var idT = charIDToTypeID("T   ");
+        var idCMYM = charIDToTypeID("CMYM");
+        desc54.putClass(idT, idCMYM);
+        executeAction(idCnvM, desc54, DialogModes.NO);
+      }
+
+      //MAKE THE SAME SIZE
+      if (first_side.width.value !== second_side.width.value || first_side.height.value !== second_side.height.value || first_side.resolution !== second_side.resolution) {
+        second_side.resizeImage(first_side.width.value, first_side.height.value, first_side.resolution, ResampleMethod.BICUBIC);
+      }
+
+      // alert(first_side)
+      // alert(second_side)
+
+      // MAKE FINISHINGS
+
+      // HELPER
+      // var finishings =
       // ['cut | dociecie' , 'sm weld | maly zgrzew', 'xl weld | duzy zgrzew', 'sleeve | rekaw'];
+
+      // CHECK IF THERE ARE OTHER FINISHINGS
+      var other_finishings_test = 0;
+      var anchor;
       for (var j = 0; j < configuration_object[i].sides.length; j++) {
         var t_obj = configuration_object[i].sides[j];
-        if (t_obj.type != finishings[0]) { // is not 'cut | dociecie'
-          var layer_copy = pasted.duplicate();
-          process_copy_of_layer(layer_copy, t_obj.side);
-        }
-      }
-      pasted.remove();
-
-      var there_is_overlap_top = false;
-      var there_is_overlap_bottom = false;
-
-      for (var j = 0; j < configuration_object[i].sides.length; j++) {
-        if (configuration_object[i].sides[j].type != finishings[0] && configuration_object[i].sides[j].side == 'top') {
-          there_is_overlap_top = true;
-        }
-        if (configuration_object[i].sides[j].type != finishings[0] && configuration_object[i].sides[j].side == 'bottom') {
-          there_is_overlap_bottom = true;
+        if (t_obj.type == finishings[0]) {
+          other_finishings_test++;
         }
       }
 
-      function resize_layer (layer, size_x, size_y, anchor) {
+      var other_finishings = true;
+      if (other_finishings_test === 4) {
+        other_finishings = false;
+      }
+
+      if (!other_finishings) { // there is only clean cut
+        // PROCESS CLEAN CUT ON ALL SIDES
+        var offset_x2 = offset * 2;
+
+        anchor = AnchorPosition.MIDDLECENTER;
+
+        app.activeDocument = second_side;
+        frame(xl_fr_size, anchor);
+
+        app.activeDocument.resizeCanvas(app.activeDocument.width.value + offset_x2, app.activeDocument.height.value + offset_x2, anchor);
+        frame(xl_fr_size, anchor);
+
+        app.activeDocument = first_side;
+        app.activeDocument.resizeImage(app.activeDocument.width.value + offset_x2, app.activeDocument.height.value + offset_x2, null, ResampleMethod.BICUBIC)
+
+        frame(xl_fr_size, anchor);
+        app.activeDocument = second_side;
+
+        finish_and_save();
+        return;
+        break;
+      }
+
+      function flip_layer(direction) {
+        if (direction === 'HORIZONTAL') {
+          var idTrnf = charIDToTypeID("Trnf");
+          var desc26 = new ActionDescriptor();
+          var idnull = charIDToTypeID("null");
+          var ref16 = new ActionReference();
+          var idLyr = charIDToTypeID("Lyr ");
+          var idOrdn = charIDToTypeID("Ordn");
+          var idTrgt = charIDToTypeID("Trgt");
+          ref16.putEnumerated(idLyr, idOrdn, idTrgt);
+          desc26.putReference(idnull, ref16);
+          var idFTcs = charIDToTypeID("FTcs");
+          var idQCSt = charIDToTypeID("QCSt");
+          var idQcsa = charIDToTypeID("Qcsa");
+          desc26.putEnumerated(idFTcs, idQCSt, idQcsa);
+          var idOfst = charIDToTypeID("Ofst");
+          var desc27 = new ActionDescriptor();
+          var idHrzn = charIDToTypeID("Hrzn");
+          var idRlt = charIDToTypeID("#Rlt");
+          desc27.putUnitDouble(idHrzn, idRlt, 0.000000);
+          var idVrtc = charIDToTypeID("Vrtc");
+          var idRlt = charIDToTypeID("#Rlt");
+          desc27.putUnitDouble(idVrtc, idRlt, 0.000000);
+          var idOfst = charIDToTypeID("Ofst");
+          desc26.putObject(idOfst, idOfst, desc27);
+          var idWdth = charIDToTypeID("Wdth");
+          var idPrc = charIDToTypeID("#Prc");
+          desc26.putUnitDouble(idWdth, idPrc, -100.000000);
+          var idIntr = charIDToTypeID("Intr");
+          var idIntp = charIDToTypeID("Intp");
+          var idNrst = charIDToTypeID("Nrst");
+          desc26.putEnumerated(idIntr, idIntp, idNrst);
+          executeAction(idTrnf, desc26, DialogModes.NO);
+        } else if (direction === 'VERTICAL') {
+          var idTrnf = charIDToTypeID("Trnf");
+          var desc28 = new ActionDescriptor();
+          var idnull = charIDToTypeID("null");
+          var ref17 = new ActionReference();
+          var idLyr = charIDToTypeID("Lyr ");
+          var idOrdn = charIDToTypeID("Ordn");
+          var idTrgt = charIDToTypeID("Trgt");
+          ref17.putEnumerated(idLyr, idOrdn, idTrgt);
+          desc28.putReference(idnull, ref17);
+          var idFTcs = charIDToTypeID("FTcs");
+          var idQCSt = charIDToTypeID("QCSt");
+          var idQcsa = charIDToTypeID("Qcsa");
+          desc28.putEnumerated(idFTcs, idQCSt, idQcsa);
+          var idOfst = charIDToTypeID("Ofst");
+          var desc29 = new ActionDescriptor();
+          var idHrzn = charIDToTypeID("Hrzn");
+          var idRlt = charIDToTypeID("#Rlt");
+          desc29.putUnitDouble(idHrzn, idRlt, 0.000000);
+          var idVrtc = charIDToTypeID("Vrtc");
+          var idRlt = charIDToTypeID("#Rlt");
+          desc29.putUnitDouble(idVrtc, idRlt, 0.000000);
+          var idOfst = charIDToTypeID("Ofst");
+          desc28.putObject(idOfst, idOfst, desc29);
+          var idHght = charIDToTypeID("Hght");
+          var idPrc = charIDToTypeID("#Prc");
+          desc28.putUnitDouble(idHght, idPrc, -100.000000);
+          var idIntr = charIDToTypeID("Intr");
+          var idIntp = charIDToTypeID("Intp");
+          var idNrst = charIDToTypeID("Nrst");
+          desc28.putEnumerated(idIntr, idIntp, idNrst);
+          executeAction(idTrnf, desc28, DialogModes.NO);
+        }
+      }
+
+      function process_copy_of_layer(layer_copy, side) {
+        app.activeDocument.activeLayer = layer_copy;
+        switch (side) {
+          case 'top':
+            flip_layer('HORIZONTAL');
+            flip_layer('VERTICAL');
+            layer_copy.translate(0, -app.activeDocument.height.value);
+            layer_copy.name = side;
+            break;
+          case 'right':
+            layer_copy.translate(app.activeDocument.width.value, 0);
+            layer_copy.name = side;
+            break;
+          case 'left':
+            layer_copy.translate(-app.activeDocument.width.value, 0);
+            layer_copy.name = side;
+            break;
+          case 'bottom':
+            flip_layer('HORIZONTAL');
+            flip_layer('VERTICAL');
+            layer_copy.translate(0, app.activeDocument.height.value);
+            layer_copy.name = side;
+            break;
+        }
+        return;
+      }
+
+      if (other_finishings) {
+
+        app.activeDocument = second_side;
+        app.activeDocument.selection.selectAll();
+        app.activeDocument.selection.copy();
+        app.activeDocument.selection.deselect();
+        app.activeDocument = first_side;
+        frame(s_fr_size, null, greyColorObj);
+        app.activeDocument.paste();
+        var pasted = app.activeDocument.activeLayer;
+
+        //1ST SIDE
+
+        //PREPARE OVERFLOWS
+        // ['cut | dociecie' , 'sm weld | maly zgrzew', 'xl weld | duzy zgrzew', 'sleeve | rekaw'];
+        for (var j = 0; j < configuration_object[i].sides.length; j++) {
+          var t_obj = configuration_object[i].sides[j];
+          if (t_obj.type != finishings[0]) { // is not 'cut | dociecie'
+            var layer_copy = pasted.duplicate();
+            process_copy_of_layer(layer_copy, t_obj.side);
+          }
+        }
+        pasted.remove();
+
+        var there_is_overlap_top = false;
+        var there_is_overlap_bottom = false;
+
+        for (var j = 0; j < configuration_object[i].sides.length; j++) {
+          if (configuration_object[i].sides[j].type != finishings[0] && configuration_object[i].sides[j].side == 'top') {
+            there_is_overlap_top = true;
+          }
+          if (configuration_object[i].sides[j].type != finishings[0] && configuration_object[i].sides[j].side == 'bottom') {
+            there_is_overlap_bottom = true;
+          }
+        }
+
+        function resize_layer(layer, size_x, size_y, anchor) {
           var bounds = layer.bounds;
           var www = bounds[2].value - bounds[0].value;
           var hhh = bounds[3].value - bounds[1].value;
           var newWidth = (100 / www) * size_x;
           var newHeight = (100 / hhh) * size_y;
           layer.resize(newWidth, newHeight, anchor);
-      }
+        }
 
-      function get_val_finishing (side) {
-        for (var p = 0; p < configuration_object[i].sides.length; p++) {
-          if (configuration_object[i].sides[p].side == side) {
-            if (configuration_object[i].sides[p].type == finishings[3]) { // sleeve
-              if (parseFloat(configuration_object[i].sides[p].finishing_value) < parseFloat(treshold_weld.text)) {
-                return configuration_object[i].sides[p].finishing_value + parseFloat(small_weld.text);
+        function get_val_finishing(side) {
+          for (var p = 0; p < configuration_object[i].sides.length; p++) {
+            var ff_val = parseFloat(configuration_object[i].sides[p].finishing_value);
+            if (configuration_object[i].sides[p].side == side) {
+              if (configuration_object[i].sides[p].type == finishings[3]) { // sleeve
+                if (ff_val < parseFloat(treshold_weld.text)) {
+                  return ff_val + parseFloat(small_weld.text);
+                } else {
+                  return ff_val + parseFloat(big_weld.text);
+                }
               } else {
-                return configuration_object[i].sides[p].finishing_value + parseFloat(big_weld.text);
+                return ff_val;
+              }
+            }
+          }
+        }
+
+        function create_new_solid_white_layer(cmyk) {
+          newLayer = app.activeDocument.artLayers.add();
+          app.activeDocument.activeLayer = newLayer;
+          app.activeDocument.selection.selectAll();
+          var s_color = new SolidColor();
+          s_color.cmyk = whiteColorObj;
+          app.activeDocument.selection.fill(s_color);
+          app.activeDocument.selection.deselect();
+          return newLayer;
+        };
+
+        //CREATE WHITE BLOCKS FOR WELD TO NOT STICK TO PAINT
+        var block;
+        if (blocks_UI.value) {
+          for (var j = 0; j < configuration_object[i].sides.length; j++) {
+            if (there_is_overlap_top && configuration_object[i].sides[j].type != finishings[0] && configuration_object[i].sides[j].side == 'left') {
+              var new_lay = create_new_solid_white_layer();
+              var n_l_height = parseFloat(get_val_finishing('top'))  - weld_overlap;
+              resize_layer(new_lay, app.activeDocument.width.value, n_l_height, AnchorPosition.TOPLEFT);
+              var c_w = app.activeDocument.activeLayer.bounds[2].value - app.activeDocument.activeLayer.bounds[0].value;
+              new_lay.translate(-c_w, 0);
+              new_lay.name = 'TOPLEFT ' + n_l_height;
+            }
+            if (there_is_overlap_bottom && configuration_object[i].sides[j].type != finishings[0] && configuration_object[i].sides[j].side == 'left') {
+              var new_lay = create_new_solid_white_layer();
+              var n_l_height = parseFloat(get_val_finishing('bottom'))  - weld_overlap;
+              resize_layer(new_lay, app.activeDocument.width.value, n_l_height, AnchorPosition.BOTTOMLEFT);
+              var c_w = app.activeDocument.activeLayer.bounds[2].value - app.activeDocument.activeLayer.bounds[0].value;
+              new_lay.translate(-c_w, 0);
+              new_lay.name = 'BOTTOMLEFT ' + n_l_height;
+            }
+            if (there_is_overlap_top && configuration_object[i].sides[j].type != finishings[0] && configuration_object[i].sides[j].side == 'right') {
+              var new_lay = create_new_solid_white_layer();
+              var n_l_height = parseFloat(get_val_finishing('top'))  - weld_overlap;
+              resize_layer(new_lay, app.activeDocument.width.value, n_l_height, AnchorPosition.TOPRIGHT);
+              var c_w = app.activeDocument.activeLayer.bounds[2].value - app.activeDocument.activeLayer.bounds[0].value;
+              new_lay.translate(c_w, 0);
+              new_lay.name = 'TOPRIGHT ' + n_l_height;
+            }
+            if (there_is_overlap_bottom && configuration_object[i].sides[j].type != finishings[0] && configuration_object[i].sides[j].side == 'right') {
+              var new_lay = create_new_solid_white_layer();
+              var n_l_height = parseFloat(get_val_finishing('bottom'))  - weld_overlap;
+              resize_layer(new_lay, app.activeDocument.width.value, n_l_height, AnchorPosition.BOTTOMRIGHT);
+              var c_w = app.activeDocument.activeLayer.bounds[2].value - app.activeDocument.activeLayer.bounds[0].value;
+              new_lay.translate(c_w, 0);
+              new_lay.name = 'BOTTOMRIGHT ' + n_l_height;
+            }
+          }
+        }
+
+        //UNCOVER OVERFLOWS
+        // ['cut | dociecie' , 'sm weld | maly zgrzew', 'xl weld | duzy zgrzew', 'sleeve | rekaw'];
+        function sec_side(VAL, anchor, side, substract) {
+          app.activeDocument = second_side;
+          var minus_val = VAL - weld_overlap - parseFloat(offset);
+          if (side == 'HORIZONTAL') {
+            if (substract) {
+              app.activeDocument.resizeCanvas(app.activeDocument.width.value - minus_val, app.activeDocument.height.value, anchor);
+              app.activeDocument.resizeCanvas(app.activeDocument.width.value + minus_val, app.activeDocument.height.value, anchor);
+            } else {
+              app.activeDocument.resizeCanvas(app.activeDocument.width.value + minus_val, app.activeDocument.height.value, anchor);
+            }
+          } else if (side == 'VERTICAL'){
+            if (substract) {
+              app.activeDocument.resizeCanvas(app.activeDocument.width.value , app.activeDocument.height.value - minus_val, anchor);
+              app.activeDocument.resizeCanvas(app.activeDocument.width.value , app.activeDocument.height.value + minus_val, anchor);
+            } else {
+              app.activeDocument.resizeCanvas(app.activeDocument.width.value , app.activeDocument.height.value + minus_val, anchor);
+            }
+          }
+          app.activeDocument = first_side;
+        }
+
+        var second_sides_overflows = {"top" : "",  "left": "", "right" : "", "bottom" : ""};
+
+        for (var j = 0; j < configuration_object[i].sides.length; j++) {
+          var t_obj = configuration_object[i].sides[j];
+          var fin_val = parseFloat(t_obj.finishing_value);
+          var final_value_after_calc = 0;
+
+          if (t_obj.type != finishings[0]) { // is not 'cut | dociecie'
+            if (t_obj.type == finishings[3]) { // sleeve
+              if (fin_val < parseFloat(treshold_weld.text)) {
+                final_value_after_calc = fin_val + parseFloat(small_weld.text) + parseFloat(offset);
+              } else {
+                final_value_after_calc = fin_val + parseFloat(big_weld.text) + parseFloat(offset);
               }
             } else {
-              return configuration_object[i].sides[p].finishing_value;
+              final_value_after_calc = fin_val + parseFloat(offset);
             }
-          }
-        }
-      }
 
-      //CREATE WHITE BLOCKS FOR WELD TO NOT STICK TO PAINT
-      var block;
-      for (var j = 0; j < configuration_object[i].sides.length; j++) {
-        if (there_is_overlap_top && configuration_object[i].sides[j].type != finishings[0] && configuration_object[i].sides[j].side == 'left') {
-          create_new_solid_white_layer();
-          resize_layer(app.activeDocument.activeLayer, parseFloat(get_val_finishing('top')) +  offset - weld_overlap, AnchorPosition.TOPLEFT);
-          var c_w = app.activeDocument.activeLayer.bounds[2].value-app.activeDocument.activeLayer.bounds[0].value;
-          app.activeDocument.activeLayer.translate(-c_w,0);
-        }
-        if (there_is_overlap_bottom && configuration_object[i].sides[j].type != finishings[0] && configuration_object[i].sides[j].side == 'left') {
-          create_new_solid_white_layer();
-          resize_layer(app.activeDocument.activeLayer, parseFloat(get_val_finishing('bottom')) +  offset - weld_overlap, AnchorPosition.BOTTOMLEFT);
-          var c_w = app.activeDocument.activeLayer.bounds[2].value-app.activeDocument.activeLayer.bounds[0].value;
-          app.activeDocument.activeLayer.translate(-c_w,0);
-        }
-        if (there_is_overlap_top && configuration_object[i].sides[j].type != finishings[0] && configuration_object[i].sides[j].side == 'right') {
-          create_new_solid_white_layer();
-          resize_layer(app.activeDocument.activeLayer, parseFloat(get_val_finishing('top')) +  offset - weld_overlap, AnchorPosition.TOPRIGHT);
-          var c_w = app.activeDocument.activeLayer.bounds[2].value-app.activeDocument.activeLayer.bounds[0].value;
-          app.activeDocument.activeLayer.translate(c_w,0);
-        }
-        if (there_is_overlap_bottom && configuration_object[i].sides[j].type != finishings[0] && configuration_object[i].sides[j].side == 'right') {
-          create_new_solid_white_layer();
-          resize_layer(app.activeDocument.activeLayer, parseFloat(get_val_finishing('bottom')) +  offset - weld_overlap, AnchorPosition.BOTTOMRIGHT);
-          var c_w = app.activeDocument.activeLayer.bounds[2].value-app.activeDocument.activeLayer.bounds[0].value;
-          app.activeDocument.activeLayer.translate(c_w,0);
-        }
-      }
+            var t_width = app.activeDocument.width.value;
+            var t_height = app.activeDocument.height.value;
 
-      //UNCOVER OVERFLOWS
-      // ['cut | dociecie' , 'sm weld | maly zgrzew', 'xl weld | duzy zgrzew', 'sleeve | rekaw'];
-      for (var j = 0; j < configuration_object[i].sides.length; j++) {
-        var t_obj = configuration_object[i].sides[j];
-        var fin_val = parseFloat(t_obj.finishing_value);
-        var final_value_after_calc = 0;
-
-        if (t_obj.type != finishings[0]) { // is not 'cut | dociecie'
-          if (t_obj.type == finishings[3]) { // sleeve
-            if (fin_val < parseFloat(treshold_weld.text)) {
-              final_value_after_calc = fin_val + parseFloat(small_weld.text) + parseFloat(offset);
-            } else {
-              final_value_after_calc = fin_val + parseFloat(big_weld.text) + parseFloat(offset);
+            switch (t_obj.side) {
+              case "top":
+                app.activeDocument.resizeCanvas(t_width, t_height + final_value_after_calc, AnchorPosition.BOTTOMCENTER);
+                sec_side(final_value_after_calc, AnchorPosition.BOTTOMCENTER, 'VERTICAL', true);
+                second_sides_overflows.top = final_value_after_calc - parseFloat(offset);
+                break;
+              case "left":
+                app.activeDocument.resizeCanvas(t_width + final_value_after_calc, t_height, AnchorPosition.MIDDLERIGHT);
+                sec_side(final_value_after_calc, AnchorPosition.MIDDLELEFT, 'HORIZONTAL', true);
+                second_sides_overflows.left = final_value_after_calc - parseFloat(offset);
+                break;
+              case "right":
+                app.activeDocument.resizeCanvas(t_width + final_value_after_calc, t_height, AnchorPosition.MIDDLELEFT);
+                sec_side(final_value_after_calc, AnchorPosition.MIDDLERIGHT, 'HORIZONTAL', true);
+                second_sides_overflows.right = final_value_after_calc - parseFloat(offset);
+                break;
+              case "bottom":
+                app.activeDocument.resizeCanvas(t_width, t_height + final_value_after_calc, AnchorPosition.TOPCENTER);
+                sec_side(final_value_after_calc, AnchorPosition.TOPCENTER, 'VERTICAL', true);
+                second_sides_overflows.bottom = final_value_after_calc - parseFloat(offset);
+                break;
             }
-          } else {
-            final_value_after_calc = fin_val + parseFloat(offset);
-          }
+          } // end of is not 'cut | dociecie'
+        } // end of for loop
 
-          var t_width = app.activeDocument.width.value;
-          var t_height = app.activeDocument.height.value;
+        app.activeDocument = second_side;
+        frame(xl_fr_size, null, blackColorObj);
 
-          switch (t_obj.side) {
-            case "top":
-              app.activeDocument.resizeCanvas(t_width, t_height + final_value_after_calc, AnchorPosition.BOTTOMCENTER);
-              break;
-            case "left":
-              app.activeDocument.resizeCanvas(t_width + final_value_after_calc, t_height, AnchorPosition.MIDDLERIGHT);
-              break;
-            case "right":
-              app.activeDocument.resizeCanvas(t_width + final_value_after_calc, t_height, AnchorPosition.MIDDLELEFT);
-              break;
-            case "bottom":
-              app.activeDocument.resizeCanvas(t_width, t_height + final_value_after_calc, AnchorPosition.TOPCENTER);
-              break;
-          }
-        } // end of is not 'cut | dociecie'
-      } // end of for loop
+        sec_side(second_sides_overflows.top, AnchorPosition.BOTTOMCENTER, 'VERTICAL', false);
+        sec_side(second_sides_overflows.left, AnchorPosition.MIDDLERIGHT, 'HORIZONTAL', false);
+        sec_side(second_sides_overflows.right, AnchorPosition.MIDDLELEFT, 'HORIZONTAL', false);
+        sec_side(second_sides_overflows.bottom, AnchorPosition.TOPCENTER, 'VERTICAL', false);
 
-      //MAKE FRAME AROUND TO CUT
+        app.activeDocument = second_side;
+        app.activeDocument.resizeCanvas(app.activeDocument.width.value + (parseFloat(offset)*2),
+          app.activeDocument.height.value + (parseFloat(offset)*2), AnchorPosition.MIDDLECENTER);
 
-      finish_and_save();
-      return;
-      break;
+          frame(xl_fr_size, null, blackColorObj);
 
-    } // end of if other_finishings
-  } // end of modules loop
+        app.activeDocument = first_side;
+        app.activeDocument.flatten();
+        frame(xl_fr_size, null, blackColorObj);
+
+        //MAKE FRAME AROUND TO CUT
+
+        finish_and_save();
+        return;
+        break;
+
+      } // end of if other_finishings
+    } // end of modules loop
+
+  } catch (e) {
+    alert(e)
+  } //end of try catch
 } // end of execute function
 
 function finish_and_save() {
