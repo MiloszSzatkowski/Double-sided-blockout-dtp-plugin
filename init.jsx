@@ -4,7 +4,7 @@
 
 ////////////////////////////////// ONLY OPERATE IN PHOTOSHOP ***********************
 
-#target photoshop
+#include _eyelets\Algorithm_abstracted.jsx
 
 ////////////////////////////////// GLOBAL VARIABLES START ***********************
 
@@ -118,7 +118,7 @@ var big_weld = bottom_first_row.add('edittext', u, 5);
 var treshold_weld_d = bottom_first_row.add('statictext', u, 'Weld treshold | Prog zgrzewu:');
 var treshold_weld = bottom_first_row.add('edittext', u, 7.0);
 var s_fr_size_UI_d = bottom_first_row.add('statictext', u, 'Thin outline | Cienka linia:');
-var s_fr_size_UI = bottom_first_row.add('edittext', u, 0.03);
+var s_fr_size_UI = bottom_first_row.add('edittext', u, 0.02);
 var xl_fr_size_UI_d = bottom_first_row.add('statictext', u, 'Big outline | Gruba linia:');
 var xl_fr_size_UI = bottom_first_row.add('edittext', u, 0.1);
 var offset_UI_d = bottom_first_row.add('statictext', u, 'Offset | offset:');
@@ -828,6 +828,7 @@ function delete_temporary_configurations() {
 }
 
 function prepare_data_before_execution() {
+
   var passed_config_obj = []
   for (var i = 0; i < scrollGroup.children.length; i++) {
 
@@ -1091,8 +1092,7 @@ function execute(configuration_object) {
         app.activeDocument = second_side;
 
         finish_and_save();
-        return;
-        break;
+        continue;
       }
 
       function flip_layer(direction) {
@@ -1220,16 +1220,20 @@ function execute(configuration_object) {
         // ['cut | dociecie' , 'sm weld | maly zgrzew', 'xl weld | duzy zgrzew', 'sleeve | rekaw'];
 
         function sec_side_resize(anchor, side) {
+          var parsed_offset = parseFloat(offset);
           app.activeDocument = second_side;
-          var _w_size = app.activeDocument.width.value + offset;
-          var _h_size = app.activeDocument.height.value + offset;
+          var _w_size = app.activeDocument.width.value + parsed_offset;
+          var _h_size = app.activeDocument.height.value + parsed_offset;
+
 
           if (side == 'HORIZONTAL') {
             app.activeDocument.resizeImage(_w_size, app.activeDocument.height.value, null, ResampleMethod.BICUBIC);
-            app.activeDocument.resizeCanvas(app.activeDocument.width.value, app.activeDocument.height.value, anchor);
+            var _w_size_minus = app.activeDocument.width.value - parsed_offset;
+            app.activeDocument.resizeCanvas(_w_size_minus, app.activeDocument.height.value, anchor);
           } else if (side == 'VERTICAL') {
             app.activeDocument.resizeImage(app.activeDocument.width.value, _h_size, null, ResampleMethod.BICUBIC);
-            app.activeDocument.resizeCanvas(app.activeDocument.width.value, app.activeDocument.height.value, anchor);
+            var _h_size_minus = app.activeDocument.height.value - parsed_offset;
+            app.activeDocument.resizeCanvas(app.activeDocument.width.value, _h_size_minus, anchor);
           }
 
           app.activeDocument = first_side;
@@ -1262,17 +1266,17 @@ function execute(configuration_object) {
                     resize_layer(app.activeDocument.activeLayer, www + parsed_offset, hhh,
                       AnchorPosition.MIDDLERIGHT);
                     if (pr_second_side_bool) {
-                      sec_side_resize(AnchorPosition.MIDDLERIGHT, 'HORIZONTAL');
+                      sec_side_resize(AnchorPosition.MIDDLELEFT, 'HORIZONTAL');
                     }
                     break;
                   case "right":
                     bounds = app.activeDocument.activeLayer.bounds;
                     www = bounds[2].value - bounds[0].value;
                     hhh = bounds[3].value - bounds[1].value;
-                    resize_layer(app.activeDocument.activeLayer, www + parsed_offset, app.activeDocument.height.value,
+                    resize_layer(app.activeDocument.activeLayer, www + parsed_offset, hhh,
                       AnchorPosition.MIDDLELEFT);
                     if (pr_second_side_bool) {
-                      sec_side_resize(AnchorPosition.MIDDLELEFT, 'HORIZONTAL');
+                      sec_side_resize(AnchorPosition.MIDDLERIGHT, 'HORIZONTAL');
                     }
                     break;
                   case "bottom":
@@ -1363,7 +1367,7 @@ function execute(configuration_object) {
               var n_l_height = parseFloat(get_val_finishing('top')) - weld_overlap;
               resize_layer(new_lay, app.activeDocument.width.value, n_l_height, AnchorPosition.TOPLEFT);
               var c_w = app.activeDocument.activeLayer.bounds[2].value - app.activeDocument.activeLayer.bounds[0].value;
-              new_lay.translate(-c_w, 0);
+              new_lay.translate(-c_w - s_fr_size, 0);
               new_lay.name = 'TOPLEFT block ' + n_l_height;
             }
             if (there_is_overlap_bottom && configuration_object[i].sides[j].type != finishings[0] && configuration_object[i].sides[j].side == 'left') {
@@ -1371,7 +1375,7 @@ function execute(configuration_object) {
               var n_l_height = parseFloat(get_val_finishing('bottom')) - weld_overlap;
               resize_layer(new_lay, app.activeDocument.width.value, n_l_height, AnchorPosition.BOTTOMLEFT);
               var c_w = app.activeDocument.activeLayer.bounds[2].value - app.activeDocument.activeLayer.bounds[0].value;
-              new_lay.translate(-c_w, 0);
+              new_lay.translate(-c_w - s_fr_size, 0);
               new_lay.name = 'BOTTOMLEFT block ' + n_l_height;
             }
             if (there_is_overlap_top && configuration_object[i].sides[j].type != finishings[0] && configuration_object[i].sides[j].side == 'right') {
@@ -1379,7 +1383,7 @@ function execute(configuration_object) {
               var n_l_height = parseFloat(get_val_finishing('top')) - weld_overlap;
               resize_layer(new_lay, app.activeDocument.width.value, n_l_height, AnchorPosition.TOPRIGHT);
               var c_w = app.activeDocument.activeLayer.bounds[2].value - app.activeDocument.activeLayer.bounds[0].value;
-              new_lay.translate(c_w, 0);
+              new_lay.translate(c_w + s_fr_size, 0);
               new_lay.name = 'TOPRIGHT block ' + n_l_height;
             }
             if (there_is_overlap_bottom && configuration_object[i].sides[j].type != finishings[0] && configuration_object[i].sides[j].side == 'right') {
@@ -1387,10 +1391,40 @@ function execute(configuration_object) {
               var n_l_height = parseFloat(get_val_finishing('bottom')) - weld_overlap;
               resize_layer(new_lay, app.activeDocument.width.value, n_l_height, AnchorPosition.BOTTOMRIGHT);
               var c_w = app.activeDocument.activeLayer.bounds[2].value - app.activeDocument.activeLayer.bounds[0].value;
-              new_lay.translate(c_w, 0);
+              new_lay.translate(c_w + s_fr_size, 0);
               new_lay.name = 'BOTTOMRIGHT block ' + n_l_height;
             }
           }
+        }
+
+        //MAKE EYELETS
+        for (var j = 0; j < configuration_object[i].sides.length; j++) {
+          var t_obj = configuration_object[i].sides[j];
+
+          if (t_obj.eyelets_bool) {
+            var _distance = parseFloat(t_obj.eyelets_distance);
+            var _size       = parseFloat(t_obj.eyelets_size);
+            var _eyelets_cmyk = t_obj.eyelets_cmyk;
+            if (_eyelets_cmyk.indexOf('0,0') !== -1) {
+              _eyelets_cmyk = blackColorObj;
+            } else if(_eyelets_cmyk.indexOf('5') !== -1) {
+              _eyelets_cmyk = greyColorObj;
+            } else {
+              _eyelets_cmyk = whiteColorObj;
+            }
+            var _eyelets_outline_bool = parseFloat(t_obj.eyelets_outline_bool);
+
+            var _shift; var _reg_shift = 1.5; // the value, how much the eyelet is shifted towards center
+            if(t_obj.type == finishings[3]) { //'sleeve | rekaw'
+              _shift =  parseFloat(t_obj.finishing_value) + _reg_shift;
+            } else {
+              _shift = 0;
+            }
+
+            make_eyelets_main_scope_function(true, t_obj.side, _distance, _size, _eyelets_cmyk, _eyelets_outline_bool);
+          }
+
+
         }
 
         //UNCOVER OVERFLOWS
