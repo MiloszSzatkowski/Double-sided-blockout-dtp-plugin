@@ -800,9 +800,9 @@ function make_eyelets_main_scope_function (is_blockout, blockout_side, blockout_
 
 if (is_blockout) {
     app.foregroundColor.cmyk = blockout_eyelets_cmyk;
-    if (!blockout_eyelets_outline_bool) {
-      eyeoutline = 0.01;
-    }
+    // if (!blockout_eyelets_outline_bool) {
+    //   eyeoutline = 0.01;
+    // }
     eyesize = blockout_size;
     batchDistance = blockout_distance;
     // CreateEyelets(eyeDistanceEachOther, up, down, left, right, eyeDistanceFromEdgeT, eyeSizeT)

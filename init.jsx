@@ -137,6 +137,8 @@ var weld_overlap_UI_d = bottom_first_row.add('statictext', u, 'Inner offset | Of
 var weld_overlap_UI = bottom_first_row.add('edittext', u, 0.5);
 var blocks_UI = bottom_first_row.add('checkbox', u, 'White blocks | Biale bloki');
 blocks_UI.value = true;
+var preview_UI = bottom_first_row.add('checkbox', u, 'Preview | Podglad');
+preview_UI.value = true;
 
 var help = bottom_third_row.add('button', u, 'HELP ?');
 
@@ -857,7 +859,7 @@ function prepare_data_before_execution() {
         v_top_02.children[2].value,
         v_top_02.children[3].value
       ],
-      "save_manual_output": v_top_02.children[4].text,
+      "save_manual_output": v_top_02.children[5].text,
       "file_01": top_01.children[1].selection.text,
       "file_02": top_02.children[1].selection.text,
       "sides": [{
@@ -1025,7 +1027,7 @@ function execute(configuration_object) {
 
       //CREATE NEW DOCUMENT IF THE FILES ARE THE SAME
       if (first_side.name.toString() == second_side.name.toString()) {
-        second_side = app.documents.add(first_side.width.value, first_side.height.value, first_side.resolution, (first_side.name + '_02'), NewDocumentMode.CMYK);
+        second_side = app.documents.add(first_side.width.value, first_side.height.value, first_side.resolution, ('crt_02_' + first_side.name), NewDocumentMode.CMYK);
         app.activeDocument = first_side;
         app.activeDocument.flatten();
         app.activeDocument.selection.selectAll();
@@ -1083,52 +1085,8 @@ function execute(configuration_object) {
         there_is_at_least_one_cut = false;
       }
 
-      if (!other_finishings) { // there is only clean cut
-        // PROCESS CLEAN CUT ON ALL SIDES
-        var offset_x2 = offset * 2;
-
-        anchor = AnchorPosition.MIDDLECENTER;
-
-        app.activeDocument = second_side;
-
-
-        // MALE EYELETS
-        for (var j = 0; j < configuration_object[i].sides.length; j++) {
-          var t_obj = configuration_object[i].sides[j];
-
-          if (t_obj.eyelets_bool) {
-            var _distance = parseFloat(t_obj.eyelets_distance);
-            var _size = parseFloat(t_obj.eyelets_size);
-
-            var _eyelets_cmyk = t_obj.eyelets_cmyk;
-            if (_eyelets_cmyk.indexOf('0,0') !== -1) {
-              _eyelets_cmyk = whiteColorObj;
-            } else if (_eyelets_cmyk.indexOf('5') !== -1) {
-              _eyelets_cmyk = greyColorObj;
-            } else {
-              _eyelets_cmyk = blackColorObj;
-            }
-            var _eyelets_outline_bool = parseFloat(t_obj.eyelets_outline_bool);
-
-            make_eyelets_main_scope_function(true, t_obj.side, _distance, _size, _eyelets_cmyk, _eyelets_outline_bool);
-          }
-
-        }
-
-        frame(xl_fr_size, anchor);
-
-        app.activeDocument.resizeCanvas(app.activeDocument.width.value + offset_x2, app.activeDocument.height.value + offset_x2, anchor);
-        frame(xl_fr_size, anchor);
-
-        app.activeDocument = first_side;
-        app.activeDocument.resizeImage(app.activeDocument.width.value + offset_x2, app.activeDocument.height.value + offset_x2, null, ResampleMethod.BICUBIC)
-
-        frame(xl_fr_size, anchor);
-        app.activeDocument = second_side;
-
-        finish_and_save(configuration_object[i], first_side, second_side);
-        continue;
-      }
+      //FORCE OTHER FINISHINGS
+      other_finishings = true;
 
       function flip_layer(direction) {
         if (direction === 'HORIZONTAL') {
@@ -1665,45 +1623,116 @@ function finish_and_save(configuration_obj, first_side, second_side) {
     app.activeDocument.saveAs(saveFile, tiffSaveOptions, true, Extension.LOWERCASE);
   }
 
+  function SaveJPEG(saveFile, jpegQuality) {
+    jpgSaveOptions = new JPEGSaveOptions();
+    jpgSaveOptions.embedColorProfile = true;
+    jpgSaveOptions.formatOptions = FormatOptions.STANDARDBASELINE;
+    jpgSaveOptions.matte = MatteType.NONE;
+    jpgSaveOptions.quality = jpegQuality;
+    activeDocument.saveAs(saveFile, jpgSaveOptions, true, Extension.LOWERCASE);
+  }
+
+  function undo(state) {
+    app.activeDocument.activeHistoryState = state;
+  }
+
+  var historyStatus;
+  function saveState() {
+    historyStatus = app.activeDocument.activeHistoryState;
+  }
+
   function save_file(side, path, close) {
-    app.activeDocument = side;
-    var Path, Name;
-    if (path == null) {
+    for (var p = 0; p < side.length; p++) {
+      app.activeDocument = side[p];
+      var Path, Name;
+      if (path == null) {
+        try {
+          if (app.activeDocument.name.indexOf('crt_02') !== -1) {
+            Path = side[0].path;
+          }
+          Path = app.activeDocument.path;
+        } catch (e) {
+          try {
+            if (p === 0) {
+              Path = side[1].path;
+            } else {
+              Path = side[0].path;
+            }
+          } catch (e) {
+            try {
+              if (app.activeDocument.name.indexOf('.pdf' !== -1)) {
+                Path = app.recentFiles[0];
+              } else {
+                alert('Path to ' + side[p].name + ' could not be found. Please, save manually.');
+              }
+            } catch (e) {}
+          }
+        }
+      } else {
+        Path = path;
+      }
+      Name = side[0].name.replace(/\.[^\.]+$/, '');
+      if (side[p] == second_side) {
+        var Suffix = "blockout_02_";
+      } else if (side[p] == first_side) {
+        var Suffix = "blockout_01_";
+      }
+      var saveFile = File(Path + "/" + Name + "_" + Suffix + '.tif');
+      var saveFile_JPG = File(Path + "/" + Name + "_" + Suffix + 'prev.jpg');
       try {
-        Path = app.activeDocument.path;
+        // alert(Path + "/" + Name + "_" + Suffix + '.tif')
+        SaveTIFF(saveFile);
+        // ********* SAVE PREVIEW
+        if (preview_UI.value) {
+          saveState();
+
+          app.activeDocument.flatten();
+
+          //to RGB
+          var id11 = charIDToTypeID("CnvM");
+          var desc4 = new ActionDescriptor();
+          var id12 = charIDToTypeID("T   ");
+          var id13 = charIDToTypeID("RGBM");
+          desc4.putClass(id12, id13);
+          var id14 = charIDToTypeID("Fltt");
+          desc4.putBoolean(id14, false);
+          executeAction(id11, desc4, DialogModes.NO);
+
+          app.activeDocument.resizeImage(30, null, 72, ResampleMethod.BICUBIC);
+
+          SaveJPEG(saveFile_JPG, 6);
+
+          undo(historyStatus);
+        }
       } catch (e) {
-        Path = app.recentFiles[0];
+        alert(e);
       }
     }
-    Name = app.activeDocument.name.replace(/\.[^\.]+$/, '');
-    if (side == second_side) {
-      var Suffix = "_02_";
-    } else if (side == first_side) {
-      var Suffix = "_01_";
-    }
-    var saveFile = File(Path + "/" + Name + "_" + Suffix + '.tif');
-    SaveTIFF(saveFile);
-    if (close) {
-      side.close(SaveOptions.DONOTSAVECHANGES);
+    for (var p = 0; p < side.length; p++) {
+      if (close) {
+        side[p].close(SaveOptions.DONOTSAVECHANGES);
+      }
     }
   }
 
   try {
+
     for (var l = 0; l < configuration_obj.save_type.length; l++) {
       var v_temp_val = configuration_obj.save_type[l];
       if (l === 0 && v_temp_val) {
-        save_file(first_side, null, true); save_file(second_side, null, true);
+        save_file([first_side, second_side], null, true);
       } else if (l === 1 && v_temp_val) {
         // let them save manually
       } else if (l === 2 && v_temp_val) {
         var p_ath = configuration_obj.save_manual_output;
         if (p_ath.indexOf('/') === -1) {
-          save_file(first_side, null, true); save_file(second_side, null, true);
+          save_file([first_side, second_side], null, true);
         } else {
-          save_file(first_side, p_ath , true); save_file(second_side, p_ath, true);
+          save_file([first_side, second_side], p_ath, true);
         }
       }
     }
+
   } catch (e) {
     alert(e)
   } //end of try
