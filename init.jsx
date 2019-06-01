@@ -27,7 +27,7 @@ var b = new File((new File($.fileName)).parent + "/_eyelets/Config/eyesize.txt")
 b.open('r');
 var eyesize_UI = "";
 while (!b.eof)
-eyesize_UI += b.readln();
+  eyesize_UI += b.readln();
 b.close();
 eyesize_UI = parseFloat(eyesize_UI);
 
@@ -1090,6 +1090,31 @@ function execute(configuration_object) {
         anchor = AnchorPosition.MIDDLECENTER;
 
         app.activeDocument = second_side;
+
+
+        // MALE EYELETS
+        for (var j = 0; j < configuration_object[i].sides.length; j++) {
+          var t_obj = configuration_object[i].sides[j];
+
+          if (t_obj.eyelets_bool) {
+            var _distance = parseFloat(t_obj.eyelets_distance);
+            var _size = parseFloat(t_obj.eyelets_size);
+
+            var _eyelets_cmyk = t_obj.eyelets_cmyk;
+            if (_eyelets_cmyk.indexOf('0,0') !== -1) {
+              _eyelets_cmyk = whiteColorObj;
+            } else if (_eyelets_cmyk.indexOf('5') !== -1) {
+              _eyelets_cmyk = greyColorObj;
+            } else {
+              _eyelets_cmyk = blackColorObj;
+            }
+            var _eyelets_outline_bool = parseFloat(t_obj.eyelets_outline_bool);
+
+            make_eyelets_main_scope_function(true, t_obj.side, _distance, _size, _eyelets_cmyk, _eyelets_outline_bool);
+          }
+
+        }
+
         frame(xl_fr_size, anchor);
 
         app.activeDocument.resizeCanvas(app.activeDocument.width.value + offset_x2, app.activeDocument.height.value + offset_x2, anchor);
@@ -1101,7 +1126,7 @@ function execute(configuration_object) {
         frame(xl_fr_size, anchor);
         app.activeDocument = second_side;
 
-        finish_and_save();
+        finish_and_save(configuration_object[i], first_side, second_side);
         continue;
       }
 
@@ -1422,21 +1447,21 @@ function execute(configuration_object) {
           if (t_obj.eyelets_bool && _shift !== 0) {
             switch (t_obj.side) {
               case "top":
-              app.activeDocument.resizeCanvas(app.activeDocument.width, app.activeDocument.height - _shift,
-                AnchorPosition.BOTTOMCENTER);
-              break;
+                app.activeDocument.resizeCanvas(app.activeDocument.width, app.activeDocument.height - _shift,
+                  AnchorPosition.BOTTOMCENTER);
+                break;
               case "left":
-              app.activeDocument.resizeCanvas(app.activeDocument.width - _shift, app.activeDocument.height ,
-                AnchorPosition.MIDDLERIGHT);
-              break;
+                app.activeDocument.resizeCanvas(app.activeDocument.width - _shift, app.activeDocument.height,
+                  AnchorPosition.MIDDLERIGHT);
+                break;
               case "right":
-              app.activeDocument.resizeCanvas(app.activeDocument.width - _shift, app.activeDocument.height ,
-                AnchorPosition.MIDDLELEFT);
-              break;
+                app.activeDocument.resizeCanvas(app.activeDocument.width - _shift, app.activeDocument.height,
+                  AnchorPosition.MIDDLELEFT);
+                break;
               case "bottom":
-              app.activeDocument.resizeCanvas(app.activeDocument.width, app.activeDocument.height - _shift,
-                AnchorPosition.TOPCENTER);
-              break;
+                app.activeDocument.resizeCanvas(app.activeDocument.width, app.activeDocument.height - _shift,
+                  AnchorPosition.TOPCENTER);
+                break;
             }
           }
         }
@@ -1477,21 +1502,21 @@ function execute(configuration_object) {
           if (t_obj.eyelets_bool && _shift !== 0) {
             switch (t_obj.side) {
               case "top":
-              app.activeDocument.resizeCanvas(app.activeDocument.width, app.activeDocument.height + _shift,
-                AnchorPosition.BOTTOMCENTER);
-              break;
+                app.activeDocument.resizeCanvas(app.activeDocument.width, app.activeDocument.height + _shift,
+                  AnchorPosition.BOTTOMCENTER);
+                break;
               case "left":
-              app.activeDocument.resizeCanvas(app.activeDocument.width + _shift, app.activeDocument.height ,
-                AnchorPosition.MIDDLERIGHT);
-              break;
+                app.activeDocument.resizeCanvas(app.activeDocument.width + _shift, app.activeDocument.height,
+                  AnchorPosition.MIDDLERIGHT);
+                break;
               case "right":
-              app.activeDocument.resizeCanvas(app.activeDocument.width + _shift, app.activeDocument.height ,
-                AnchorPosition.MIDDLELEFT);
-              break;
+                app.activeDocument.resizeCanvas(app.activeDocument.width + _shift, app.activeDocument.height,
+                  AnchorPosition.MIDDLELEFT);
+                break;
               case "bottom":
-              app.activeDocument.resizeCanvas(app.activeDocument.width, app.activeDocument.height + _shift,
-                AnchorPosition.TOPCENTER);
-              break;
+                app.activeDocument.resizeCanvas(app.activeDocument.width, app.activeDocument.height + _shift,
+                  AnchorPosition.TOPCENTER);
+                break;
             }
           }
         }
@@ -1598,6 +1623,8 @@ function execute(configuration_object) {
         app.activeDocument = second_side;
         frame(xl_fr_size, null, blackColorObj);
 
+        //MAKE FRAME AROUND TO CUT
+
         sec_side(second_sides_overflows.top, AnchorPosition.BOTTOMCENTER, 'VERTICAL', false);
         sec_side(second_sides_overflows.left, AnchorPosition.MIDDLELEFT, 'HORIZONTAL', false);
         sec_side(second_sides_overflows.right, AnchorPosition.MIDDLERIGHT, 'HORIZONTAL', false);
@@ -1616,11 +1643,8 @@ function execute(configuration_object) {
         app.activeDocument.flatten();
         frame(xl_fr_size, null, blackColorObj);
 
-        //MAKE FRAME AROUND TO CUT
 
-        finish_and_save();
-        return;
-        break;
+        finish_and_save(configuration_object[i], first_side, second_side);
 
       } // end of if other_finishings
     } // end of modules loop
@@ -1630,7 +1654,7 @@ function execute(configuration_object) {
   } //end of try catch
 } // end of execute function
 
-function finish_and_save() {
+function finish_and_save(configuration_obj, first_side, second_side) {
   function SaveTIFF(saveFile) {
     tiffSaveOptions = new TiffSaveOptions();
     tiffSaveOptions.embedColorProfile = true;
@@ -1640,11 +1664,48 @@ function finish_and_save() {
     // tiffSaveOptions.jpegQuality=12;
     app.activeDocument.saveAs(saveFile, tiffSaveOptions, true, Extension.LOWERCASE);
   }
-  try {
 
+  function save_file(side, path, close) {
+    app.activeDocument = side;
+    var Path, Name;
+    if (path == null) {
+      try {
+        Path = app.activeDocument.path;
+      } catch (e) {
+        Path = app.recentFiles[0];
+      }
+    }
+    Name = app.activeDocument.name.replace(/\.[^\.]+$/, '');
+    if (side == second_side) {
+      var Suffix = "_02_";
+    } else if (side == first_side) {
+      var Suffix = "_01_";
+    }
+    var saveFile = File(Path + "/" + Name + "_" + Suffix + '.tif');
+    SaveTIFF(saveFile);
+    if (close) {
+      side.close(SaveOptions.DONOTSAVECHANGES);
+    }
+  }
+
+  try {
+    for (var l = 0; l < configuration_obj.save_type.length; l++) {
+      var v_temp_val = configuration_obj.save_type[l];
+      if (l === 0 && v_temp_val) {
+        save_file(first_side, null, true); save_file(second_side, null, true);
+      } else if (l === 1 && v_temp_val) {
+        // let them save manually
+      } else if (l === 2 && v_temp_val) {
+        var p_ath = configuration_obj.save_manual_output;
+        if (p_ath.indexOf('/') === -1) {
+          save_file(first_side, null, true); save_file(second_side, null, true);
+        } else {
+          save_file(first_side, p_ath , true); save_file(second_side, p_ath, true);
+        }
+      }
+    }
   } catch (e) {
     alert(e)
-
   } //end of try
 } // end of finish_and_save
 ///////////////////////
