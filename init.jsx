@@ -21,6 +21,16 @@ var n = null;
 
 var script_folder = new File($.fileName).parent;
 
+//load eyelet size
+var b = new File((new File($.fileName)).parent + "/_eyelets/Config/eyesize.txt");
+
+b.open('r');
+var eyesize_UI = "";
+while (!b.eof)
+eyesize_UI += b.readln();
+b.close();
+eyesize_UI = parseFloat(eyesize_UI);
+
 ////////////////////////////////// GLOBAL VARIABLES END ***********************
 
 /////////////////////////////////// UI START ***********************
@@ -675,7 +685,7 @@ function Module() {
           // distance
           this.parent.children[2].text = 50;
           // size
-          this.parent.parent.children[6].children[1].text = 0.7;
+          this.parent.parent.children[6].children[1].text = eyesize_UI;
           // color
           this.parent.parent.children[6].children[3].selection = 0;
           // outline
@@ -694,7 +704,7 @@ function Module() {
       inner_group_eyelets_02[j].add('statictext', u, 'Wielkosc | Size');
       inner_group_eyelets_02[j].add('edittext', u, 0);
       inner_group_eyelets_02[j].add('statictext', u, 'CMYK');
-      inner_group_eyelets_02[j].add('dropdownlist', u, colors).selection = 0;
+      inner_group_eyelets_02[j].add('dropdownlist', u, colors).selection = 1;
       inner_group_eyelets_02[j].add('checkbox', u, 'Obrys | outline');
 
       group_to_add.add('panel');
@@ -1397,34 +1407,93 @@ function execute(configuration_object) {
           }
         }
 
-        //MAKE EYELETS
+        //MAKE EYELETS *************************
+
+        //SHRINK CANVAS BEFORE PLACING EYELETS
+        for (var j = 0; j < configuration_object[i].sides.length; j++) {
+          var t_obj = configuration_object[i].sides[j];
+          var _shift;
+          if (t_obj.type == finishings[3]) { //'sleeve | rekaw'
+            _shift = parseFloat(t_obj.finishing_value);
+          } else {
+            _shift = 0;
+          }
+          app.activeDocument = first_side;
+          if (t_obj.eyelets_bool && _shift !== 0) {
+            switch (t_obj.side) {
+              case "top":
+              app.activeDocument.resizeCanvas(app.activeDocument.width, app.activeDocument.height - _shift,
+                AnchorPosition.BOTTOMCENTER);
+              break;
+              case "left":
+              app.activeDocument.resizeCanvas(app.activeDocument.width - _shift, app.activeDocument.height ,
+                AnchorPosition.MIDDLERIGHT);
+              break;
+              case "right":
+              app.activeDocument.resizeCanvas(app.activeDocument.width - _shift, app.activeDocument.height ,
+                AnchorPosition.MIDDLELEFT);
+              break;
+              case "bottom":
+              app.activeDocument.resizeCanvas(app.activeDocument.width, app.activeDocument.height - _shift,
+                AnchorPosition.TOPCENTER);
+              break;
+            }
+          }
+        }
+
+        //USE OUTSIDE SCOPE FUNCTION TO PLACE THE EYELETS
         for (var j = 0; j < configuration_object[i].sides.length; j++) {
           var t_obj = configuration_object[i].sides[j];
 
           if (t_obj.eyelets_bool) {
             var _distance = parseFloat(t_obj.eyelets_distance);
-            var _size       = parseFloat(t_obj.eyelets_size);
+            var _size = parseFloat(t_obj.eyelets_size);
+
             var _eyelets_cmyk = t_obj.eyelets_cmyk;
             if (_eyelets_cmyk.indexOf('0,0') !== -1) {
-              _eyelets_cmyk = blackColorObj;
-            } else if(_eyelets_cmyk.indexOf('5') !== -1) {
+              _eyelets_cmyk = whiteColorObj;
+            } else if (_eyelets_cmyk.indexOf('5') !== -1) {
               _eyelets_cmyk = greyColorObj;
             } else {
-              _eyelets_cmyk = whiteColorObj;
+              _eyelets_cmyk = blackColorObj;
             }
             var _eyelets_outline_bool = parseFloat(t_obj.eyelets_outline_bool);
-
-            var _shift; var _reg_shift = 1.5; // the value, how much the eyelet is shifted towards center
-            if(t_obj.type == finishings[3]) { //'sleeve | rekaw'
-              _shift =  parseFloat(t_obj.finishing_value) + _reg_shift;
-            } else {
-              _shift = 0;
-            }
 
             make_eyelets_main_scope_function(true, t_obj.side, _distance, _size, _eyelets_cmyk, _eyelets_outline_bool);
           }
 
+        }
 
+        //RETURN TO THE PREVIOUS SIZE BEFORE SHRINKING FOR EYELETS
+        for (var j = 0; j < configuration_object[i].sides.length; j++) {
+          var t_obj = configuration_object[i].sides[j];
+          var _shift;
+          if (t_obj.type == finishings[3]) { //'sleeve | rekaw'
+            _shift = parseFloat(t_obj.finishing_value);
+          } else {
+            _shift = 0;
+          }
+          app.activeDocument = first_side;
+          if (t_obj.eyelets_bool && _shift !== 0) {
+            switch (t_obj.side) {
+              case "top":
+              app.activeDocument.resizeCanvas(app.activeDocument.width, app.activeDocument.height + _shift,
+                AnchorPosition.BOTTOMCENTER);
+              break;
+              case "left":
+              app.activeDocument.resizeCanvas(app.activeDocument.width + _shift, app.activeDocument.height ,
+                AnchorPosition.MIDDLERIGHT);
+              break;
+              case "right":
+              app.activeDocument.resizeCanvas(app.activeDocument.width + _shift, app.activeDocument.height ,
+                AnchorPosition.MIDDLELEFT);
+              break;
+              case "bottom":
+              app.activeDocument.resizeCanvas(app.activeDocument.width, app.activeDocument.height + _shift,
+                AnchorPosition.TOPCENTER);
+              break;
+            }
+          }
         }
 
         //UNCOVER OVERFLOWS
@@ -1562,6 +1631,20 @@ function execute(configuration_object) {
 } // end of execute function
 
 function finish_and_save() {
-  // alert('done')
-}
+  function SaveTIFF(saveFile) {
+    tiffSaveOptions = new TiffSaveOptions();
+    tiffSaveOptions.embedColorProfile = true;
+    tiffSaveOptions.alphaChannels = true;
+    tiffSaveOptions.layers = true;
+    tiffSaveOptions.imageCompression = TIFFEncoding.TIFFLZW;
+    // tiffSaveOptions.jpegQuality=12;
+    app.activeDocument.saveAs(saveFile, tiffSaveOptions, true, Extension.LOWERCASE);
+  }
+  try {
+
+  } catch (e) {
+    alert(e)
+
+  } //end of try
+} // end of finish_and_save
 ///////////////////////

@@ -1,5 +1,6 @@
 
-function make_eyelets_main_scope_function (is_blockout) {
+function make_eyelets_main_scope_function (is_blockout, blockout_side, blockout_distance,
+  blockout_size, blockout_eyelets_cmyk, blockout_eyelets_outline_bool) {
 
   // CS6
 
@@ -797,13 +798,37 @@ function make_eyelets_main_scope_function (is_blockout) {
     app.backgroundColor.cmyk = whiteColorObj;
   }
 
-
+if (is_blockout) {
+    app.foregroundColor.cmyk = blockout_eyelets_cmyk;
+    if (!blockout_eyelets_outline_bool) {
+      eyeoutline = 0.01;
+    }
+    eyesize = blockout_size;
+    batchDistance = blockout_distance;
+    // CreateEyelets(eyeDistanceEachOther, up, down, left, right, eyeDistanceFromEdgeT, eyeSizeT)
+    switch (blockout_side) {
+      case "top":
+      CreateEyelets(batchDistance, true, false, false, false);
+      break;
+      case "left":
+      CreateEyelets(batchDistance, false, false, true, false);
+      break;
+      case "right":
+      CreateEyelets(batchDistance, false, false, false, true);
+      break;
+      case "bottom":
+      CreateEyelets(batchDistance, false, true, false, false);
+      break;
+    }
+} else {
   if (batchDistance != 0) {
     app.foregroundColor.cmyk = originalColor;
     CreateEyelets(batchDistance, true, true, true, true);
   } else {
     win.show();
   }
+}
+
 
   var eyeMultiplicator,
   eyeSize,
@@ -817,7 +842,7 @@ function make_eyelets_main_scope_function (is_blockout) {
   N_eyeDistanceFromEdge;
 
   function CreateEyelets(eyeDistanceEachOther, up, down, left, right, eyeDistanceFromEdgeT, eyeSizeT) {
-    if (batchDistance !== 0 && batchDistance != null) {
+    if ((batchDistance !== 0 && batchDistance != null) || is_blockout) {
       //converting dpi in inches to centimeters ratio  - 1 inch = 2.54 centimeters
       eyeMultiplicator = app.activeDocument.resolution / 2.54;
       eyeSize = eyesize * eyeMultiplicator;
