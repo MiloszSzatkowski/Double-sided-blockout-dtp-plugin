@@ -1494,11 +1494,11 @@ function execute(configuration_object) {
 
             var _eyelets_cmyk = t_obj.eyelets_cmyk;
             if (_eyelets_cmyk.indexOf('0,0') !== -1) {
-              _eyelets_cmyk = whiteColorObj;
+              _eyelets_cmyk = blackColorObj;
             } else if (_eyelets_cmyk.indexOf('5') !== -1) {
               _eyelets_cmyk = greyColorObj;
             } else {
-              _eyelets_cmyk = blackColorObj;
+              _eyelets_cmyk = whiteColorObj;
             }
             var _eyelets_outline_bool = parseFloat(t_obj.eyelets_outline_bool);
 
