@@ -45,10 +45,88 @@ function make_eyelets_main_scope_function (is_blockout, blockout_side, blockout_
   l_g.yellow = lg;
   l_g.black = lg;
 
+  // alert( parseInt(app.version.split('.')[0] ));
   function outline() {
-    color_shape(app.foregroundColor.cmyk.cyan, app.foregroundColor.cmyk.magenta, app.foregroundColor.cmyk.yellow, app.foregroundColor.cmyk.black,
-      l_g.cyan, l_g.magenta, l_g.yellow, l_g.black, eyeoutline);
+
+      if (parseInt(app.version.split('.')[0] ) > 12) {
+        color_shape(app.foregroundColor.cmyk.cyan, app.foregroundColor.cmyk.magenta, app.foregroundColor.cmyk.yellow, app.foregroundColor.cmyk.black,
+          l_g.cyan, l_g.magenta, l_g.yellow, l_g.black, eyeoutline);
+      } else {
+        legacy(eyeoutline)
+      }
     }
+
+    function legacy(val) {
+
+      app.preferences.rulerUnits = Units.CM;
+      oCM = app.activeDocument.width.value;
+      app.preferences.rulerUnits = Units.PIXELS;
+      oPX = app.activeDocument.width.value;
+      factor = oPX/oCM; // --> factor
+      app.preferences.rulerUnits = Units.CM;
+
+      wid = val * factor;
+
+      var id485 = charIDToTypeID( "setd" );
+          var desc79 = new ActionDescriptor();
+          var id486 = charIDToTypeID( "null" );
+              var ref53 = new ActionReference();
+              var id487 = charIDToTypeID( "Prpr" );
+              var id488 = charIDToTypeID( "Lefx" );
+              ref53.putProperty( id487, id488 );
+              var id489 = charIDToTypeID( "Lyr " );
+              var id490 = charIDToTypeID( "Ordn" );
+              var id491 = charIDToTypeID( "Trgt" );
+              ref53.putEnumerated( id489, id490, id491 );
+          desc79.putReference( id486, ref53 );
+          var id492 = charIDToTypeID( "T   " );
+              var desc80 = new ActionDescriptor();
+              var id493 = charIDToTypeID( "Scl " );
+              var id494 = charIDToTypeID( "#Prc" );
+              desc80.putUnitDouble( id493, id494, 100.000000 );
+              var id495 = charIDToTypeID( "FrFX" );
+                  var desc81 = new ActionDescriptor();
+                  var id496 = charIDToTypeID( "enab" );
+                  desc81.putBoolean( id496, true );
+                  var id497 = charIDToTypeID( "Styl" );
+                  var id498 = charIDToTypeID( "FStl" );
+                  var id499 = charIDToTypeID( "OutF" );
+                  desc81.putEnumerated( id497, id498, id499 );
+                  var id500 = charIDToTypeID( "PntT" );
+                  var id501 = charIDToTypeID( "FrFl" );
+                  var id502 = charIDToTypeID( "SClr" );
+                  desc81.putEnumerated( id500, id501, id502 );
+                  var id503 = charIDToTypeID( "Md  " );
+                  var id504 = charIDToTypeID( "BlnM" );
+                  var id505 = charIDToTypeID( "Nrml" );
+                  desc81.putEnumerated( id503, id504, id505 );
+                  var id506 = charIDToTypeID( "Opct" );
+                  var id507 = charIDToTypeID( "#Prc" );
+                  //opacity
+                  desc81.putUnitDouble( id506, id507, 100.000000 );
+                  var id508 = charIDToTypeID( "Sz  " );
+                  var id509 = charIDToTypeID( "#Pxl" );
+                  //width
+                  desc81.putUnitDouble( id508, id509, wid );
+                  var id510 = charIDToTypeID( "Clr " );
+                      var desc82 = new ActionDescriptor();
+                      var id511 = charIDToTypeID( "Cyn " );
+                      desc82.putDouble( id511, 5 );
+                      var id512 = charIDToTypeID( "Mgnt" );
+                      desc82.putDouble( id512, 5 );
+                      var id513 = charIDToTypeID( "Ylw " );
+                      desc82.putDouble( id513, 5 );
+                      var id514 = charIDToTypeID( "Blck" );
+                      desc82.putDouble( id514, 5 );
+                  var id515 = charIDToTypeID( "CMYC" );
+                  desc81.putObject( id510, id515, desc82 );
+              var id516 = charIDToTypeID( "FrFX" );
+              desc80.putObject( id495, id516, desc81 );
+          var id517 = charIDToTypeID( "Lefx" );
+          desc79.putObject( id492, id517, desc80 );
+      executeAction( id485, desc79, DialogModes.NO );
+    }
+
 
     function color_shape(fill_cyan, fill_magenta, fill_yellow, fill_black, outline_cyan, outline_magenta, outline_yellow, outline_black, outline_size) {
 

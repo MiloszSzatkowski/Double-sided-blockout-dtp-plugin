@@ -1,6 +1,57 @@
 ////////////////////////////////// INCLUDE LIBRARIES ***********************
 
-#include json2.js
+// #include json2.js
+#target photoshop
+// alert(app.name + " " + app.version);
+// var t_v = parseFloat(app.version.toString().split('.')[0]);
+// var version = t_v;
+// alert(app.version);
+
+
+//json polyfill
+function convertToText(obj) {
+    var str = '';
+    str = str + ' {   "all":['; //start
+
+    for (var i = 0; i < obj.all.length; i++) {
+
+      str = str + '{';
+      str = str + '"name":' + '"' +  obj.all[i].name.toString() + '"' + ',\n';
+      str = str + '"sides":[\n';
+
+      for (var j = 0; j < obj.all[i].sides.length; j++) {
+
+        str = str + '{';
+        str = str +
+           '"finishing_type" :' + '"' +   obj.all[i].sides[j].finishing_type.toString() +  '"' +   " ,  \n" +
+           '"finishing_value" :' + '"' +  obj.all[i].sides[j].finishing_value.toString() + '"' +   " ,  \n" +
+           '"eyelets_bool" :' +   obj.all[i].sides[j].eyelets_bool + " ,  \n" +
+           '"eyelets_distance" :' + '"' +  obj.all[i].sides[j].eyelets_distance.toString() + '"' +   " ,  \n" +
+           '"eyelets_size" :' + '"' +  obj.all[i].sides[j].eyelets_size.toString() +  '"' +  " ,  \n" +
+           '"eyelets_cmyk" :' + '"' +  obj.all[i].sides[j].eyelets_cmyk.toString() + '"' +   " ,  \n" +
+           '"eyelets_outline_bool" :' +  obj.all[i].sides[j].eyelets_outline_bool
+        ;
+        str = str + '}';
+
+        if (j !== obj.all[i].sides.length-1) {
+          str = str + " , \n ";
+        }
+
+      }
+
+      str = str + ']\n';
+
+      str = str + '}';
+
+      if (i !== obj.all.length-1) {
+        str = str + ' , \n ';
+      }
+    }
+
+    str = str + ' ]  } '; //finish
+    return str;
+}
+
 
 ////////////////////////////////// ONLY OPERATE IN PHOTOSHOP ***********************
 
@@ -42,7 +93,7 @@ function updateUILayout(el) {
 // ////////////////////  WINDOW
 
 var W = new Window('dialog {orientation: "row"}', u_window_title);
-W.maximumSize.width = 1270;
+W.maximumSize.width = 1290;
 W.maximumSize.height = 700;
 
 W.minimumSize.width = W.maximumSize.width - 10;
@@ -63,7 +114,7 @@ var bottom_group = main_group.add('group {orientation: "column", alignChildren: 
 var modules_container = top_group.add('group {orientation: "row"}, alignChildren: ["left","top"]', u, e);
 
 modules_container.minimumSize.height = W.maximumSize.height - 30;
-modules_container.minimumSize.width = W.maximumSize.width - 250;
+modules_container.minimumSize.width = W.maximumSize.width - 280;
 modules_container.maximumSize.height = modules_container.minimumSize.height;
 
 var scrollGroup = modules_container.add('group {orientation: "column"}, alignChildren: ["fill","fill"]', u, e)
@@ -72,7 +123,7 @@ var scroll_offset = 0;
 
 scrollBar.onChanging = function() {
   for (var i = 0; i < scrollGroup.children.length; i++) {
-    scrollGroup.children[i].location.y = Math.round(((-1 * scroll_offset) * this.value + (235 * i) / 20) * 20);
+    scrollGroup.children[i].location.y = Math.round(((-1 * scroll_offset) * this.value + (280 * i) / 20) * 20);
   }
   // scrollGroup.location.y = (-1 * scroll_offset) * this.value;
 }
@@ -209,7 +260,7 @@ var not = 'xxx';
 var bigger_not = 'xxxxxxxx';
 var tick = 'o'
 
-var opened_documents_names = [''];
+var opened_documents_names = [' '];
 
 try {
   if (app.documents.length !== 0) {
@@ -315,12 +366,16 @@ function Module() {
 
   var available_files_first_side = _top.add('dropdownlist', u, opened_documents_names);
   available_files_first_side.minimumSize.width = 800;
+  available_files_first_side.minimumSize.height = 30;
+
   available_files_first_side.selection = 0;
 
   var button_second_side = _middle.add("iconbutton", u, "Step2Icon");
 
   var available_files_second_side = _middle.add('dropdownlist', u, opened_documents_names);
   available_files_second_side.minimumSize.width = 800;
+  available_files_second_side.minimumSize.height = 30;
+
   available_files_second_side.selection = 0;
 
   same_image.onClick = function() {
@@ -400,10 +455,7 @@ function Module() {
     tt_w_02[p].add('image', undefined, File(script_folder + '/icons/eyelet_icon.png'));
     tt_w_02[p].add('statictext', u, not);
     tt_w_02[p].add('statictext', u, not);
-    tt_w_02[p].add('statictext', u, bigger_not, {
-      scrolling: true,
-      multiline: true
-    });
+    tt_w_02[p].add('statictext', u, bigger_not);
     tt_w_02[p].add('statictext', u, not);
   }
 
@@ -538,14 +590,16 @@ function Module() {
             "eyelets_outline_bool": inner_group_eyelets_02[s].children[4].value
           })
         }
-        var parsed_to_json_from_js_object = JSON.stringify(config_file_json);
+        // var parsed_to_json_from_js_object = config_file_json.toString();
+        var parsed_to_json_from_js_object = config_file_json;
+        // var parsed_to_json_from_js_object = JSON.stringify(config_file_json);
         save_config_json(parsed_to_json_from_js_object);
         config_file_json = load_json_config();
 
         var dev = false;
         var dat = '';
         if (dev == true) {
-          dat = JSON.stringify(config_file_json.all[load_config_drop.selection.index]).replace(/[.{}]/g, ' ').replace(/,"/g, '\n')
+          // dat = JSON.stringify(config_file_json.all[load_config_drop.selection.index]).replace(/[.{}]/g, ' ').replace(/,"/g, '\n')
         }
 
         if (job == 'save_new') {
@@ -575,12 +629,15 @@ function Module() {
       var json_unparsed = '';
       while (!FILE.eof)
         json_unparsed += FILE.readln();
-      json_parsed = JSON.parse(json_unparsed);
+      // json_parsed = JSON.parse(json_unparsed);
+      var json_parsed =  eval("(" + json_unparsed + ")");
       FILE.close();
       return json_parsed;
     }
 
     function save_config_json(jsn) {
+      jsn = convertToText(jsn);
+      // alert(jsn);
       var FILE = new File((new File($.fileName)).parent + '/finish_configs/config.json');
       FILE.open("w");
       FILE.writeln('');
@@ -618,7 +675,8 @@ function Module() {
             break;
           } else {
             config_file_json.all.splice(i, 1);
-            var parsed_to_json_from_js_object = JSON.stringify(config_file_json);
+            var parsed_to_json_from_js_object = config_file_json;
+            // var parsed_to_json_from_js_object = JSON.stringify(config_file_json);
             save_config_json(parsed_to_json_from_js_object);
             break;
           }
@@ -701,12 +759,12 @@ function Module() {
       };
 
       inner_group_eyelets[j].add('statictext', u, 'Odleglosc | Distance');
-      inner_group_eyelets[j].add('edittext', u, 0);
+      inner_group_eyelets[j].add('edittext', u, 0).minimumSize.width = 30;
       inner_group_eyelets_02[j] = group_to_add.add('group {orientation: "row"}');
-      inner_group_eyelets_02[j].add('statictext', u, 'Wielkosc | Size');
-      inner_group_eyelets_02[j].add('edittext', u, 0);
+      inner_group_eyelets_02[j].add('statictext', u, 'Wielk. | Size');
+      inner_group_eyelets_02[j].add('edittext', u, 0).minimumSize.width = 30;
       inner_group_eyelets_02[j].add('statictext', u, 'CMYK');
-      inner_group_eyelets_02[j].add('dropdownlist', u, colors).selection = 1;
+      inner_group_eyelets_02[j].add('dropdownlist', u, colors).selection = 0;
       inner_group_eyelets_02[j].add('checkbox', u, 'Obrys | outline');
 
       group_to_add.add('panel');
@@ -809,7 +867,8 @@ function delete_temporary_configurations() {
   var json_unparsed = '';
   while (!FILE.eof)
     json_unparsed += FILE.readln();
-  var json_parsed = JSON.parse(json_unparsed);
+  var json_parsed =  eval("(" + json_unparsed + ")");
+  // var json_parsed = JSON.parse(json_unparsed);
   FILE.close();
 
   var at_least_one = false;
@@ -825,7 +884,8 @@ function delete_temporary_configurations() {
   }
 
   if (at_least_one) {
-    jsn = JSON.stringify(json_parsed);
+    jsn = convertToText(json_parsed);
+    // jsn = JSON.stringify(json_parsed);
 
     FILE.open("w");
     FILE.writeln('');
@@ -912,7 +972,7 @@ function prepare_data_before_execution() {
   } // end of for loop
 
   for (var i = 0; i < passed_config_obj.length; i++) {
-    if (passed_config_obj[i].file_01 == '' || passed_config_obj[i].file_01 == '') {
+    if (passed_config_obj[i].file_01 == '' || passed_config_obj[i].file_01 == '' || passed_config_obj[i].file_01 == ' ') {
       alert('Error in module nr ' + (
         i + 1) + '\n\nProsze wybrac pliki do przetworzenia\nPlease, select files to proccess');
       return;
