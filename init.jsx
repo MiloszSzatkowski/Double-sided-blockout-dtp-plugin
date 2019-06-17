@@ -93,8 +93,8 @@ function updateUILayout(el) {
 // ////////////////////  WINDOW
 
 var W = new Window('dialog {orientation: "row"}', u_window_title);
-W.maximumSize.width = 1290;
-W.maximumSize.height = 700;
+W.maximumSize.width = 1310; //1290 old val
+W.maximumSize.height = 750;
 
 W.minimumSize.width = W.maximumSize.width - 10;
 W.minimumSize.height = W.maximumSize.height - 10;
@@ -114,7 +114,7 @@ var bottom_group = main_group.add('group {orientation: "column", alignChildren: 
 var modules_container = top_group.add('group {orientation: "row"}, alignChildren: ["left","top"]', u, e);
 
 modules_container.minimumSize.height = W.maximumSize.height - 30;
-modules_container.minimumSize.width = W.maximumSize.width - 280;
+modules_container.minimumSize.width = W.maximumSize.width - 290;
 modules_container.maximumSize.height = modules_container.minimumSize.height;
 
 var scrollGroup = modules_container.add('group {orientation: "column"}, alignChildren: ["fill","fill"]', u, e)
@@ -137,7 +137,8 @@ var bottom_second_row = bottom_sub_group.add('group {orientation: "column", alig
 var bottom_third_row = bottom_sub_group.add('group {orientation: "column", alignChildren: ["fill","fill"]}');
 
 var amount_of_modules = bottom_first_row.add('panel').add('statictext', u, 1);
-amount_of_modules.minimumSize.width = 20;
+amount_of_modules.minimumSize.width = 10;
+amount_of_modules.minimumSize.height = 5;
 
 var add_blockout = bottom_first_row.add('button', u, '+ blockout');
 
@@ -172,23 +173,23 @@ close_button.onClick = function() {
   W.close();
 }
 
-var small_weld_d = bottom_first_row.add('statictext', u, 'Small weld | Maly zgrzew:');
+var small_weld_d = bottom_first_row.add('statictext', u, 'Small weld\nMaly zgrzew:', {multiline: true});
 var small_weld = bottom_first_row.add('edittext', u, 3);
-var big_weld_d = bottom_first_row.add('statictext', u, 'Big weld | Duzy zgrzew:');
+var big_weld_d = bottom_first_row.add('statictext', u, 'Big weld\nDuzy zgrzew:', {multiline: true});
 var big_weld = bottom_first_row.add('edittext', u, 5);
-var treshold_weld_d = bottom_first_row.add('statictext', u, 'Weld treshold | Prog zgrzewu:');
+var treshold_weld_d = bottom_first_row.add('statictext', u, 'Weld treshold\nProg zgrzewu:', {multiline: true});
 var treshold_weld = bottom_first_row.add('edittext', u, 7.0);
-var s_fr_size_UI_d = bottom_first_row.add('statictext', u, 'Thin outline | Cienka linia:');
+var s_fr_size_UI_d = bottom_first_row.add('statictext', u, 'Thin outline\nCienka linia:', {multiline: true});
 var s_fr_size_UI = bottom_first_row.add('edittext', u, 0.02);
-var xl_fr_size_UI_d = bottom_first_row.add('statictext', u, 'Big outline | Gruba linia:');
+var xl_fr_size_UI_d = bottom_first_row.add('statictext', u, 'Big outline\nGruba linia:', {multiline: true});
 var xl_fr_size_UI = bottom_first_row.add('edittext', u, 0.1);
-var offset_UI_d = bottom_first_row.add('statictext', u, 'Offset | offset:');
+var offset_UI_d = bottom_first_row.add('statictext', u, 'Offset:', {multiline: true});
 var offset_UI = bottom_first_row.add('edittext', u, 1);
-var weld_overlap_UI_d = bottom_first_row.add('statictext', u, 'Inner offset | Offset w srodku:');
+var weld_overlap_UI_d = bottom_first_row.add('statictext', u, 'Inner offset\nOffset w srodku:', {multiline: true});
 var weld_overlap_UI = bottom_first_row.add('edittext', u, 0.5);
-var blocks_UI = bottom_first_row.add('checkbox', u, 'White blocks | Biale bloki');
-blocks_UI.value = true;
-var preview_UI = bottom_first_row.add('checkbox', u, 'Preview | Podglad');
+var blocks_UI = bottom_first_row.add('checkbox', u, 'Blocks | Bloki');
+blocks_UI.value = false;
+var preview_UI = bottom_first_row.add('checkbox', u, 'Prev | Podglad');
 preview_UI.value = true;
 
 var help = bottom_third_row.add('button', u, 'HELP ?');
@@ -1732,13 +1733,11 @@ function finish_and_save(configuration_obj, first_side, second_side) {
         Path = path;
       }
       Name = side[0].name.replace(/\.[^\.]+$/, '');
-      if (side[p] == second_side) {
-        var Suffix = "blockout_02_";
-      } else if (side[p] == first_side) {
-        var Suffix = "blockout_01_";
-      }
+
+      var Suffix = "blockout_str_" + (p+1);
+
       var saveFile = File(Path + "/" + Name + "_" + Suffix + '.tif');
-      var saveFile_JPG = File(Path + "/" + Name + "_" + Suffix + 'prev.jpg');
+      var saveFile_JPG = File(Path + "/" + Name + "_" + Suffix + '_prev.jpg');
       try {
         // alert(Path + "/" + Name + "_" + Suffix + '.tif')
         SaveTIFF(saveFile);
