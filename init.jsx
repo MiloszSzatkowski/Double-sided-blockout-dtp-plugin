@@ -1389,7 +1389,7 @@ function execute(configuration_object) {
             var ff_val = parseFloat(configuration_object[i].sides[p].finishing_value);
             if (configuration_object[i].sides[p].side == side) {
               if (configuration_object[i].sides[p].type == finishings[3]) { // sleeve
-                if (ff_val < parseFloat(treshold_weld.text)) {
+                if (ff_val < parseFloat(treshold_weld.text) || ff_val == parseFloat(treshold_weld.text)  ) {
                   return ff_val + parseFloat(small_weld.text);
                 } else {
                   return ff_val + parseFloat(big_weld.text);
@@ -1583,7 +1583,7 @@ function execute(configuration_object) {
           var final_value_after_calc = 0;
 
           if (t_obj.type == finishings[3]) { // sleeve
-            if (fin_val < parseFloat(treshold_weld.text)) {
+            if (fin_val < parseFloat(treshold_weld.text) || fin_val ==  parseFloat(treshold_weld.text) ) {
               final_value_after_calc = fin_val + parseFloat(small_weld.text) + parseFloat(offset);
             } else {
               final_value_after_calc = fin_val + parseFloat(big_weld.text) + parseFloat(offset);
