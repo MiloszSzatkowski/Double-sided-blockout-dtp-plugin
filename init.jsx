@@ -1463,7 +1463,7 @@ function execute(configuration_object) {
             _shift = 0;
           }
           app.activeDocument = first_side;
-          if (t_obj.eyelets_bool && _shift !== 0) {
+          if (_shift !== 0) {
             switch (t_obj.side) {
               case "top":
                 app.activeDocument.resizeCanvas(app.activeDocument.width, app.activeDocument.height - _shift,
@@ -1508,7 +1508,7 @@ function execute(configuration_object) {
 
         }
 
-        //RETURN TO THE PREVIOUS SIZE BEFORE SHRINKING FOR EYELETS
+        //RETURN TO THE PREVIOUS SIZE AFTER SHRINKING FOR EYELETS
         for (var j = 0; j < configuration_object[i].sides.length; j++) {
           var t_obj = configuration_object[i].sides[j];
           var _shift;
@@ -1518,7 +1518,7 @@ function execute(configuration_object) {
             _shift = 0;
           }
           app.activeDocument = first_side;
-          if (t_obj.eyelets_bool && _shift !== 0) {
+          if (_shift !== 0) {
             switch (t_obj.side) {
               case "top":
                 app.activeDocument.resizeCanvas(app.activeDocument.width, app.activeDocument.height + _shift,
@@ -1734,7 +1734,11 @@ function finish_and_save(configuration_obj, first_side, second_side) {
       }
       Name = side[0].name.replace(/\.[^\.]+$/, '');
 
-      var Suffix = "blockout_str_" + (p+1);
+      // **** SUFFIX OF A FILE -> blockout + nr side + width + height -> delimiter = '_'
+      var size_suffix_W =  (Math.round((10 * app.activeDocument.width.value)) /10 ).toString().replace('.',',');
+      var size_suffix_H =  (Math.round((10 * app.activeDocument.height.value)) /10 ).toString().replace('.',',');
+      var Suffix = "blockout_str_" + (p+1) + '_' + size_suffix_W + '_x_' + size_suffix_H;
+      // **** SUFFIX OF A FILE -> blockout + nr side + width + height -> delimiter = '_'
 
       var saveFile = File(Path + "/" + Name + "_" + Suffix + '.tif');
       var saveFile_JPG = File(Path + "/" + Name + "_" + Suffix + '_prev.jpg');
