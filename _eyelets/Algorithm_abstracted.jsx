@@ -636,42 +636,36 @@ function make_eyelets_main_scope_function (is_blockout, blockout_side, blockout_
     weldGlobalGreyVal = parseFloat(weldGlobalGrey.text);
 
     if (win.bottomGroup.alldocuments.value == true) {
-      loop();
+      // loop opened files
+      loop = true;
+      for (var i = 0; i < app.documents.length; i++) {
+        app.activeDocument = app.documents[i];
+        CreateEyelets(eyeDistanceEachOther, up, down, left, right, eyeDistanceFromEdgeT, eyeSizeT);
+      }
     } else if (folder_box.value === true) {
-      loop_folder();
+      // loop folder
+      var openedFile,
+      folderLoc,
+      Name;
+      folderLoc = new Folder(outputFolder) + "/";
+
+      for (var i = 0; i < files_to_pr.length; i++) {
+        openedFile = app.open(inputFiles[i]);
+        app.activeDocument = openedFile;
+        CreateEyelets(eyeDistanceEachOther, up, down, left, right, eyeDistanceFromEdgeT, eyeSizeT);
+
+        Name = app.activeDocument.name.replace(/\.[^\.]+$/, '');
+
+        SaveTIFF(new File(folderLoc + '0' + i + '_' + Name + '.tif'));
+
+        openedFile.close(SaveOptions.DONOTSAVECHANGES);
+      }
     } else {
       CreateEyelets(eyeDistanceEachOther, up, down, left, right, eyeDistanceFromEdgeT, eyeSizeT);
     }
 
     win.close();
   };
-
-  function loop() {
-    loop = true;
-    for (var i = 0; i < app.documents.length; i++) {
-      app.activeDocument = app.documents[i];
-      CreateEyelets(eyeDistanceEachOther, up, down, left, right, eyeDistanceFromEdgeT, eyeSizeT);
-    }
-  }
-
-  var openedFile,
-  folderLoc,
-  Name;
-  function loop_folder() {
-    folderLoc = new Folder(outputFolder) + "/";
-
-    for (var i = 0; i < files_to_pr.length; i++) {
-      openedFile = app.open(inputFiles[i]);
-      app.activeDocument = openedFile;
-      CreateEyelets(eyeDistanceEachOther, up, down, left, right, eyeDistanceFromEdgeT, eyeSizeT);
-
-      Name = app.activeDocument.name.replace(/\.[^\.]+$/, '');
-
-      SaveTIFF(new File(folderLoc + '0' + i + '_' + Name + '.tif'));
-
-      openedFile.close(SaveOptions.DONOTSAVECHANGES);
-    }
-  }
 
   //color button
   var colorButton;
@@ -919,7 +913,8 @@ if (is_blockout) {
   roundedDistanceH,
   N_eyeDistanceFromEdge;
 
-  function CreateEyelets(eyeDistanceEachOther, up, down, left, right, eyeDistanceFromEdgeT, eyeSizeT) {
+   function CreateEyelets(eyeDistanceEachOther, up, down, left, right, eyeDistanceFromEdgeT, eyeSizeT) {
+
     if ((batchDistance !== 0 && batchDistance != null) || is_blockout) {
       //converting dpi in inches to centimeters ratio  - 1 inch = 2.54 centimeters
       eyeMultiplicator = app.activeDocument.resolution / 2.54;
