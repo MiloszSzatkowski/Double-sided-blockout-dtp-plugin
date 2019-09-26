@@ -38,6 +38,20 @@ function make_eyelets_main_scope_function (is_blockout, blockout_side, blockout_
   b.close();
   eyesize = parseFloat(eyesize);
 
+  //load eyelet distance
+  //eyedistancefromedge -> 1.9 , change 26/09/2019 , 1.9 = new default
+
+  var b = new File((new File($.fileName)).parent + "/Config/eyedistance.txt");
+
+  b.open('r');
+  var eyedistancefromedge = "";
+  while (!b.eof)
+  eyedistancefromedge += b.readln();
+  b.close();
+  eyedistancefromedge = parseFloat(eyedistancefromedge);
+
+  //
+
   var l_g = new CMYKColor();
   var lg = 5;
   l_g.cyan = lg;
@@ -333,7 +347,7 @@ function make_eyelets_main_scope_function (is_blockout, blockout_side, blockout_
       sizeT: StaticText { text: 'Wielkosc | Size:' }, \
       sizeTedit: EditText { text: " + eyesize + ", characters: 5, justify: 'left'} \
       distanceT: StaticText { text: 'Margines | Margin:' }, \
-      distanceTedit: EditText { text: '1.5', characters: 5, justify: 'left'}, \
+      distanceTedit: EditText { text: " + eyedistancefromedge + ", characters: 5, justify: 'left'}, \
     } \
     \
     bottomGroup: Group{ \
@@ -757,7 +771,7 @@ function make_eyelets_main_scope_function (is_blockout, blockout_side, blockout_
   button25.onClick = function() {
     win.sliderPanel.te.text = 25;
     win.sliderPanel.sizeTedit.text = eyesize;
-    win.sliderPanel.distanceTedit.text = 1.5;
+    win.sliderPanel.distanceTedit.text = eyedistancefromedge;
     // standard weld - 3cm
     weldGlobalWhite.text = 3;
     eyelets_before_weld.value = true;
@@ -768,7 +782,7 @@ function make_eyelets_main_scope_function (is_blockout, blockout_side, blockout_
   button30.onClick = function() {
     win.sliderPanel.te.text = 30;
     win.sliderPanel.sizeTedit.text = eyesize;
-    win.sliderPanel.distanceTedit.text = 1.5;
+    win.sliderPanel.distanceTedit.text = eyedistancefromedge;
     // standard weld - 3cm
     weldGlobalWhite.text = 3;
     eyelets_before_weld.value = true;
@@ -779,7 +793,7 @@ function make_eyelets_main_scope_function (is_blockout, blockout_side, blockout_
   button50.onClick = function() {
     win.sliderPanel.te.text = 50;
     win.sliderPanel.sizeTedit.text = eyesize;
-    win.sliderPanel.distanceTedit.text = 1.5;
+    win.sliderPanel.distanceTedit.text = eyedistancefromedge;
     // standard weld - 3cm
     weldGlobalWhite.text = 3;
     eyelets_before_weld.value = true;
@@ -816,41 +830,41 @@ function make_eyelets_main_scope_function (is_blockout, blockout_side, blockout_
 
     //left
     eyes[1] = new Ellipse(0 - eyeSize / 2, 0 - eyeSize / 2, eyeSize, eyeSize);
-    eyes[1].translate(1.5, 1.5);
+    eyes[1].translate(eyedistancefromedge, eyedistancefromedge);
 
     eyes[2] = new Ellipse(0 - eyeSize / 2, 0 - eyeSize / 2, eyeSize, eyeSize);
-    eyes[2].translate(1.5, (50 + 1.5));
+    eyes[2].translate(eyedistancefromedge, (50 + eyedistancefromedge));
 
     eyes[3] = new Ellipse(0 - eyeSize / 2, 0 - eyeSize / 2, eyeSize, eyeSize);
-    eyes[3].translate(1.5, (50 + 125 + 1.5));
+    eyes[3].translate(eyedistancefromedge, (50 + 125 + eyedistancefromedge));
 
     eyes[4] = new Ellipse(0 - eyeSize / 2, 0 - eyeSize / 2, eyeSize, eyeSize);
-    eyes[4].translate(1.5, (50 + 125 + 125 + 1.5));
+    eyes[4].translate(eyedistancefromedge, (50 + 125 + 125 + eyedistancefromedge));
 
     eyes[5] = new Ellipse(0 - eyeSize / 2, 0 - eyeSize / 2, eyeSize, eyeSize);
-    eyes[5].translate(1.5, (50 + 125 + 125 + 125 + 1.5));
+    eyes[5].translate(eyedistancefromedge, (50 + 125 + 125 + 125 + eyedistancefromedge));
 
     eyes[6] = new Ellipse(0 - eyeSize / 2, 0 - eyeSize / 2, eyeSize, eyeSize);
-    eyes[6].translate(1.5, (app.activeDocument.height.value - 1.5));
+    eyes[6].translate(eyedistancefromedge, (app.activeDocument.height.value - eyedistancefromedge));
 
     //right
     eyes[7] = new Ellipse(0 - eyeSize / 2, 0 - eyeSize / 2, eyeSize, eyeSize);
-    eyes[7].translate((app.activeDocument.width.value - 1.5), 1.5);
+    eyes[7].translate((app.activeDocument.width.value - eyedistancefromedge), eyedistancefromedge);
 
     eyes[8] = new Ellipse(0 - eyeSize / 2, 0 - eyeSize / 2, eyeSize, eyeSize);
-    eyes[8].translate((app.activeDocument.width.value - 1.5), (50 + 1.5));
+    eyes[8].translate((app.activeDocument.width.value - eyedistancefromedge), (50 + eyedistancefromedge));
 
     eyes[9] = new Ellipse(0 - eyeSize / 2, 0 - eyeSize / 2, eyeSize, eyeSize);
-    eyes[9].translate((app.activeDocument.width.value - 1.5), (50 + 125 + 1.5));
+    eyes[9].translate((app.activeDocument.width.value - eyedistancefromedge), (50 + 125 + eyedistancefromedge));
 
     eyes[10] = new Ellipse(0 - eyeSize / 2, 0 - eyeSize / 2, eyeSize, eyeSize);
-    eyes[10].translate((app.activeDocument.width.value - 1.5), (50 + 125 + 125 + 1.5));
+    eyes[10].translate((app.activeDocument.width.value - eyedistancefromedge), (50 + 125 + 125 + eyedistancefromedge));
 
     eyes[11] = new Ellipse(0 - eyeSize / 2, 0 - eyeSize / 2, eyeSize, eyeSize);
-    eyes[11].translate((app.activeDocument.width.value - 1.5), (50 + 125 + 125 + 125 + 1.5));
+    eyes[11].translate((app.activeDocument.width.value - eyedistancefromedge), (50 + 125 + 125 + 125 + eyedistancefromedge));
 
     eyes[12] = new Ellipse(0 - eyeSize / 2, 0 - eyeSize / 2, eyeSize, eyeSize);
-    eyes[12].translate((app.activeDocument.width.value - 1.5), (app.activeDocument.height.value - 1.5));
+    eyes[12].translate((app.activeDocument.width.value - eyedistancefromedge), (app.activeDocument.height.value - eyedistancefromedge));
 
   }
 
@@ -923,7 +937,7 @@ if (is_blockout) {
       _w_Amount = Math.round(app.activeDocument.width / eyeDistanceEachOther);
       _h_Amount = Math.round(app.activeDocument.height / eyeDistanceEachOther);
 
-      eyeDistanceFromEdge = 1.5;
+      eyeDistanceFromEdge = eyedistancefromedge;
       diffW = app.activeDocument.width - eyeDistanceFromEdge - eyeDistanceFromEdge;
       roundedDistanceW = diffW / _w_Amount;
       diffH = app.activeDocument.height - eyeDistanceFromEdge - eyeDistanceFromEdge;
